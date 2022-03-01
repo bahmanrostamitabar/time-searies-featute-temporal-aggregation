@@ -1,0 +1,28 @@
+Call:
+glm(formula = marks ~ . - peak - trough - spike - x_acf10 - x_acf1 - 
+    seas_acf1 - e_acf1 - e_acf10 - diff1_acf1 - diff1_acf10 - 
+    diff2_acf1 - diff2_acf10, family = binomial, data = train.data[, 
+    -1])
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.5818  -1.4023   0.9048   0.9458   1.2555  
+
+Coefficients:
+                  Estimate Std. Error z value Pr(>|z|)    
+(Intercept)        0.54894    0.01138  48.245  < 2e-16 ***
+trend              0.15121    0.02336   6.472 9.64e-11 ***
+linearity         -0.06377    0.01321  -4.828 1.38e-06 ***
+curvature         -0.02793    0.01157  -2.415 0.015736 *  
+entropy           -0.05036    0.02497  -2.016 0.043761 *  
+seasonal_strength -0.04109    0.01196  -3.434 0.000594 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 44180  on 33599  degrees of freedom
+Residual deviance: 43888  on 33594  degrees of freedom
+AIC: 43900
+
+Number of Fisher Scoring iterations: 4

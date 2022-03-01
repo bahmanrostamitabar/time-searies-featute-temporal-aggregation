@@ -1,0 +1,404 @@
+library(M4comp2018)
+library(thief)
+
+Monthly_M4 <- Filter(function(l) l$period == "Monthly", M4)
+n<-length(Monthly_M4)
+
+AggForcast<-function(data=Monthly_M4,n=length(Monthly_M4),...){
+  
+  fsteps<-length(Monthly_M4[[1]]$xx)+6#dodato plus 6 u zavisnosti dal prognoziras 18 ili 24 mjeseca unaprijed
+  m<-c("Monthly","2-Monthly","Quarterly","4-Monthly","Biannual","Annual")
+  
+  TAForecasts<-array(dim=c(n,fsteps,length(m)),dimnames = list(c(),c(paste(rep(c("t+"),fsteps),1:fsteps)),c(m)))
+  TAErrors<-array(dim=c(n,7,length(m)),dimnames = list(c(),c("ME","RMSE","MAE","MPE","MAPE","MASE","ACF1"),c(m)))
+  
+  #browser()
+  
+  for(i in (1:n)){
+    #SCENARIO 2 dodavanje veceg test skupa:
+    train<-ts(Monthly_M4[[i]]$x[1:(length(Monthly_M4[[i]]$x)-6)],frequency = 12,start = tsp(Monthly_M4[[i]]$x)[1])
+    test<-ts(c(Monthly_M4[[i]]$x[(length(Monthly_M4[[i]]$x)-5):length(Monthly_M4[[i]]$x)],Monthly_M4[[i]]$xx),frequency = 12, start=c(tsp(train)[2]+1/12))
+    trainagg<-tsaggregates(train,align = "start")
+    testagg<-tsaggregates(test,align = "start")
+    h=24
+    
+    #Scenario 1 sa 12 perioda skracivanje test skupa
+    #1 nacin sa 12 perioda
+    #train<-Monthly_M4[[i]]$x
+    #testagg<-tsaggregates(ts((Monthly_M4[[i]]$xx)[1:12],start = tsp(Monthly_M4[[i]]$xx)[1],frequency =tsp(Monthly_M4[[i]]$xx)[3]),align = "start")
+    #h=12
+    
+    print(i)
+    for(k in (1:length(m))){
+      if(k==1){
+        prediction<-forecast(train,h)
+        originalLevel<-prediction
+        TAForecasts[i,1:h,k]<-prediction$mean
+      }else{
+        prediction<-tsaggregates(originalLevel$mean,align = "start")[m[k]]
+        TAForecasts[i,1:length(testagg[[m[k]]]),k]<-prediction[[1]]
+      }
+      
+      if(m[[k]]=="Annual"){
+        TAErrors[i,1:7,k]<-extended_accuracy(prediction[[1]],testagg[[m[k]]],trainingset=trainagg[[m[k]]])[,1:7]
+      }else if(m[[k]]=="Monthly"){
+        TAErrors[i,1:7,k]<-extended_accuracy(prediction,testagg[[m[k]]])[2,1:7]#ovdje ne treba poseban trainset jer je objekat prognoze forecast
+      }else{
+        TAErrors[i,1:7,k]<-extended_accuracy(prediction[[1]],testagg[[m[k]]],trainingset=trainagg[[m[k]]])[,1:7]
+      }
+    }
+  }
+  return(list(TAForecasts=TAForecasts,TAErrors=TAErrors))
+}
+
+AggForcast(Monthly_M4,1)
+
+estimations<-AggForcast(Monthly_M4)
+
+
+plot(estimations$TAErrors[1,"MAPE",1:6],type="b",ylim=c(0,25),ylab = "MAPE error")
+boje<-2:100
+for(i in (2:100)){
+  readline("Pres enter to add a plot")
+  lines(estimations$TAErrors[i,"MAPE",1:6],type="b",ylim=c(0,25),col=boje[i])
+}
+
+#MAPE
+boxplot(estimations$TAErrors[,"MAPE",1:6])
+boxplot(estimations$TAErrors[,"MAPE",1:6],outline=FALSE)#without outliers
+summary(estimations$TAErrors[,"MAPE",1:6])
+
+
+#Sve isto samo za MASE gresku
+plot(estimations$TAErrors[1,"MASE",1:6],type="b",ylim=c(0,5),ylab = "MASE error")
+boje<-2:100
+for(i in (2:100)){
+  readline("Pres enter to add a plot")
+  lines(estimations$TAErrors[i,"MASE",1:6],type="b",ylim=c(0,5),col=boje[i])
+}
+
+
+###Svaki nivo pojedinicna prognoza, da bi se kasnije uporedila sa aggregiranim prognozama iz mjesecnog nivoa
+OriginalForcast<-function(data=Monthly_M4,n=length(Monthly_M4),...){
+  
+  fsteps<-length(Monthly_M4[[1]]$xx)+6#dodato plus 6 u zavisnosti dal prognoziras 18 ili 24 mjeseca unaprijed
+  m<-c("Monthly","2-Monthly","Quarterly","4-Monthly","Biannual","Annual")
+  
+  TAForecasts<-array(dim=c(n,fsteps,length(m)),dimnames = list(c(),c(paste(rep(c("t+"),fsteps),1:fsteps)),c(m)))
+  TAErrors<-array(dim=c(n,8,length(m)),dimnames = list(c(),c("ME","RMSE","MAE","MPE","MAPE","MASE","ACF1","Theil's U"),c(m)))
+  
+  #browser()
+  
+  for(i in (1:n)){
+    #SCENARIO 2 dodavanje veceg test skupa:
+    train<-ts(Monthly_M4[[i]]$x[1:(length(Monthly_M4[[i]]$x)-6)],frequency = 12,start = tsp(Monthly_M4[[i]]$x)[1])
+    test<-ts(c(Monthly_M4[[i]]$x[(length(Monthly_M4[[i]]$x)-5):length(Monthly_M4[[i]]$x)],Monthly_M4[[i]]$xx),frequency = 12, start=c(tsp(train)[2]+1/12))
+    trainagg<-tsaggregates(train,align = "start")
+    testagg<-tsaggregates(test,align = "start")
+    h=24
+    
+    #Scenario 1 sa 12 perioda skracivanje test skupa
+    #1 nacin sa 12 perioda
+    #train<-Monthly_M4[[i]]$x
+    #testagg<-tsaggregates(ts((Monthly_M4[[i]]$xx)[1:12],start = tsp(Monthly_M4[[i]]$xx)[1],frequency =tsp(Monthly_M4[[i]]$xx)[3]),align = "start")
+    #h=12
+    
+    print(i)
+    for(k in (1:length(m))){
+      if(k==1){
+        prediction<-forecast(train,h)
+        originalLevel<-prediction
+        TAForecasts[i,1:h,k]<-prediction$mean
+      }else{
+        #browser()
+        prediction<-forecast(trainagg[[m[k]]],h=length(testagg[[m[k]]]))
+        TAForecasts[i,1:length(testagg[[m[k]]]),k]<-prediction$mean
+      }
+      
+      #Because the missmatch between start of the prediction and testagg in accuracy function
+      #Ranije je bilo TAErrors[i,1:5,k]<-accuracy(prediction$mean,testagg[[m[k]]])[,1:5]
+      prediction<-as.vector(prediction$mean)
+      testing<-as.vector(testagg[[m[k]]])
+      
+      if(m[[k]]=="Annual"){
+        TAErrors[i,1:5,k]<-accuracy(prediction,testing)[,1:5]
+      }else if(m[[k]]=="Monthly"){
+        TAErrors[i,1:5,k]<-accuracy(prediction,testing)[,1:5]
+      }else{
+        TAErrors[i,1:5,k]<-accuracy(prediction,testing)[,1:5]
+      }
+    }
+  }
+  return(list(TAForecasts=TAForecasts,TAErrors=TAErrors))
+}
+
+#dodati gore i da racuna MASE kao i niz drugih gresaka sa extenede accurqacy
+
+OriginalForcast(Monthly_M4,1)
+
+#Iybrisati
+#Ovo ispod je proracun na brzinu-kasnije izbrisati
+#uporedjivanje i zajebavanje sad cu posto je kod sjeban samo u estimations ubaciti godisnje prognoze pojedinacne
+
+#U ovom radu treba dodati sve moguce greske i MASE i tu davidenko i ostale
+
+Original<-OriginalForcast(Monthly_M4)
+estimations<-AggForcast(Monthly_M4)
+
+#Oba ova fajla sa 48000 serija su sacuvana u folderu do njih mozes doci preko
+O<- readRDS("Original.rds")
+E<- readRDS("estimations.rds")
+
+estimations <- E
+Original <- O
+
+estimations$TAErrors[,"MAPE",1]<-estimations$TAErrors[,"MAPE",6]
+
+estimations$TAErrors[,"MAPE",6]<-Original$TAErrors[,"MAPE",6]
+comparison<-cbind(estimations$TAErrors[,"MAPE",6], Original$TAErrors[,"MAPE",6])
+colnames(comparison)<-c("agg","base")
+
+####IYbrisati
+#Otprilike 497/503 polovina serija je bolje prognozirati na nizim nivoima nego na godisnjem
+
+bestperforming2<-function(dataset,agglevels=c("Monthly","2-Monthly","Quarterly","4-Monthly","Biannual","Annual")){
+  Best2<-matrix(rep(NA,dim(dataset)[1]*dim(dataset)[2]),ncol=dim(dataset)[2])
+  colnames(Best2)<-c("ME","RMSE","MAE","MPE","MAPE","MASE","ACF1")
+  browser()
+  
+  for(i in 1: dim(dataset)[1]){
+    for(j in 5:6){#poredjenje samo MAPE (5) i MASE (6) greske jer su skalirane i to ima samo smisla jer ME, MAE, RMSE, MPE su na razlicitim skalama po nivoima
+      minimum<-dataset[i,j,1]
+      bestlevel<-agglevels[1]
+      for(k in agglevels){
+        print(i)
+        if(dataset[i,j,k]<minimum){
+          minimum<-dataset[i,j,k]
+          bestlevel<-k
+        }
+      }
+      Best2[i,j]<-bestlevel
+    }
+  }
+  return(Best2)
+}
+Best<-bestperforming2(estimations$TAErrors)#All Levels
+head(Best)
+summary(Best)
+
+Best<-bestperforming2(estimations$TAErrors,agglevels=c("Monthly","Annual"))
+head(Best)
+summary(Best)
+
+#uraditi cross validaciju podataka
+#https://robjhyndman.com/hyndsight/tscv/
+#dodati i u opis podataka iz koje oblasti dolaze Demographic, Industry, Finance...
+
+
+#4870/48000#ranije sa nepovezanim nivoima
+5798/48000#sa povezanim nivoima i h=24 periona unaprijed
+
+library(dplyr)
+
+Best2idx<-data.frame(cbind(1:48000,Best))
+
+BestOriginal<-filter(Best2idx, MAPE=="Monthly")
+BestOriginal<-edit(BestOriginal)#promjeniti kolonu u numeric kod V1
+
+#Crtanje originalih serija na kojima je ets originalna frekvencija bila bolja
+for (i in ((BestOriginal[,1]))){
+  
+  plot(tsaggregates(Monthly_M4[[i]]$x, align = "end"),main=(paste("Data on which original sampling was better",i)))
+  
+  readline("Pres enter to add a plot")
+}
+
+#Summarising the data charactristics of the series were Original level was better
+
+Monthly_M4[[BestOriginal$idx]]$x
+hist(BestOriginal)
+
+
+#add characteristics of the data on which ets was best on original data
+
+features<- readRDS("features.rds")
+
+osobine<-filter(features,frequency==12)
+
+#Ovo ispod je samo histogramisanje mjesecnih dobrih serija-popravi taj kod kasnije
+izdvojeneOsobine<-data.frame(cbind(1:48000,osobine))
+samomjesecne<-izdvojeneOsobine[BestOriginal$V1,]
+samomjesecne<-samomjesecne[,-c(2,3,4,9,10,13,14,15,16,17)]
+
+par(mfrow=c(2,5))
+for(i in (2:10)){
+  
+  hist(samomjesecne[,i],xlab =NULL,main = names(samomjesecne)[i],col = "green")
+}
+
+par(mfrow=c(1,1))
+
+summary(samomjesecne[,-1])
+
+
+samogodisnje<-izdvojeneOsobine[-BestOriginal$V1,]
+samogodisnje<-samogodisnje[,-c(2,3,4,9,10,13,14,15,16,17)]
+
+par(mfrow=c(2,5))
+for(i in (2:10)){
+  
+  hist(samogodisnje[,i],xlab =NULL,main = names(samogodisnje)[i],col = "green")
+}
+
+par(mfrow=c(1,1))
+
+summary(samogodisnje[,-1])
+
+
+ts.origin<-rep(NA,48000)
+for(i in (1:48000)){
+  ts.origin[i]<-as.character(Monthly_M4[[i]]$type)
+}
+
+metrics<-cbind(ts.origin,data.frame(osobine)); colnames(metrics)<-c("type",colnames(osobine))
+
+metrics<-metrics[,-c(2,3,4)];head(metrics)
+metrics[,2:18]<-scale(metrics[,2:18])#summary(metrics)
+boxplot(metrics)
+str(metrics)
+cor(metrics[,-1])#there is a lot of corelation, so petentional confounding
+dev.new()
+pairs(metrics[,-1])
+
+
+#Making classification data base
+
+classdata<-Best# Monthly Vs. Annual
+
+criteria<-"MAPE"
+marks<-rep(NA,dim(classdata)[1])
+for(i in (1:dim(classdata)[1])){
+  if(classdata[i,criteria]=="Monthly"){
+    marks[i]<-"Original"
+  }else{marks[i]<-"Aggregate"}
+}
+ClassTable<-cbind(metrics,marks)
+
+str(ClassTable)
+
+attach(ClassTable)
+
+dev.new()
+#pairs(ClassTable[,2:18],col=ClassTable$marks)#nacrtati za prezentaciju samo onde koje su najznacajnije
+pairs(ClassTable[,-c(1,6,7,10,11,12,13,14,18)],col=ClassTable$marks)
+
+lr<-glm(marks~.,family = binomial, data=ClassTable);summary(lr)
+#dodati train data
+
+lr<-glm(marks~.-e_acf1-e_acf10-x_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10,family = binomial, data=ClassTable[,-1]);summary(lr)
+
+set.seed(1)
+train=sample(1:48000,48000*0.7)
+
+train.data<-ClassTable[train,]
+test.data<-ClassTable[-train,]
+
+lr<-glm(marks~.-e_acf1-e_acf10-x_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10,family = binomial, data=train.data[,-1]);summary(lr)
+
+lr.probs=predict(lr,type="response",test.data)
+lr.probs[1:10];summary(lr.probs)
+
+contrasts(ClassTable[,"marks"])
+
+cutoff<-0.18
+cutoff<-0.61#ja dodao za novu situaciju 19.04.
+lr.pred<-rep("Aggregate",48000-length(train))
+lr.pred[lr.probs>cutoff]="Original"
+t<-table(lr.pred,ClassTable[-train,"marks"]);print(t)
+mean(lr.pred==ClassTable[-train,"marks"])
+sensitivity<-t[2,2]/(t[2,2]+t[1,2]);sensitivity#procenat pravilno identifikovanih originalih serija koje su identifikovane
+specificity<-(1-(t[2,1]/(t[1,1]+t[2,1])))*100;specificity#procenat pravilno identifikovanih Agreagiranih serija koje su identifikovane
+
+
+summary(ClassTable[-train,"marks"])
+2513/(11887+2513)
+
+cutoff<-seq(from=0.05,to=0.4,by=0.01)
+
+Misclas<-rep(NA,length(cutoff))
+FN<-rep(NA,length(cutoff))
+FP<-rep(NA,length(cutoff))
+AUC<-rep(NA,length(cutoff))
+
+library(ROSE)
+
+j=1
+for(i in cutoff){
+  lr.pred=ifelse(lr.probs>i,"Original","Aggregate")
+  
+  t<-table(lr.pred,ClassTable[-train,"marks"]);print(t)
+  
+  print(c("cutoff is",i))
+  print(c("the error is",mean(lr.pred==ClassTable[-train,"marks"])))
+  #roc.curve(ClassTable[-train,"marks"],lr.pred)
+  #print(roc.curve(ClassTable[-train,"marks"],lr.pred))
+  
+  Misclas[j]<-mean(lr.pred==ClassTable[-train,"marks"])
+  
+  sensitivity<-t[2,2]/(t[2,2]+t[1,2]);print(c("sensitivity",sensitivity))#procenat pravilno identifikovanih originalih serija koje su identifikovane
+  specificity<-(1-(t[2,1]/(t[1,1]+t[2,1])))*100;print(c("specificity",specificity))#procenat pravilno identifikovanih Agreagiranih serija koje su identifikovane
+  FN[j]<-(t[1,2]/(t[1,2]+t[2,2]));print(c("FN is",FN[j]))
+  FP[j]<-(t[2,1]/(t[1,1]+t[2,1]));print(c("FP is",FP[j]))
+  AUC[j]<-((roc.curve(ClassTable[-train,"marks"],lr.pred,FALSE))$auc)[1]
+  j<-j+1
+}
+plot(cutoff,FN,type="l",col="blue")
+points(cutoff,FP,type="l",col="orange")
+points(cutoff,Misclas,type="l")
+plot(cutoff,AUC,type="l")
+
+cutoff[which.max(AUC)]
+
+#cutoff treba da bude 0.18 ili 0.2-naknadno odluci
+i<-0.18
+lr.pred=ifelse(lr.probs>0.18,"Original","Aggregate")
+t<-table(lr.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+
+library(performanceEstimation)
+classificationMetrics(ClassTable[-train,"marks"],lr.pred)
+
+
+library(ROSE)
+#test ROC curve
+roc.curve(ClassTable[-train,"marks"],lr.pred)
+#AUC 0.583
+
+#train ROC curve
+lr.probs=predict(lr,type="response",train.data)
+lr.pred<-rep("Aggregate",length(train))
+lr.pred[lr.probs>0.2]="Original"
+
+roc.curve(ClassTable[train,"marks"],lr.pred)
+#AUC 0.589
+
+
+#dodati test skup
+#uraditi cross validaciju  
+
+#OVAKO MOZES MJENJATI SVAKU FUNKCIJU
+edit(tsfeatures)
+
+#bas lijepa vremenska serija
+plot(forecast(Monthly_M4[[1000]]$x))
+lines(Monthly_M4[[1000]]$xx,col="red")
+
+---------
+  #08.06.
+  # Upoređivanje samo Mjesecni i godisnji nivo
+  
+  reducedTable<-estimations$TAErrors[,,c(1,6)]
+Best3<-bestperforming2(reducedTable)
+
+Best3<-bestperforming2(estimations$TAErrors,agglevels = c("Monthly","Annual"))

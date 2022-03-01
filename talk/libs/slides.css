@@ -1,0 +1,745 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,500,600');
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,600');
+@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Kalam:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Amiri:400,400i,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif+JP:400,500,600&display=swap');
+@import url(https://fonts.googleapis.com/css?family=Muli:600,700,800);
+@import url('https://fonts.googleapis.com/css?family=Inconsolata:400');
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Upright:700');
+@import url('https://fonts.googleapis.com/css?family=Assistant:400,700');
+@import url('https://fonts.googleapis.com/css?family=Caveat');
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600);
+@import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+
+:root {
+  --classic-blue: #0F4C81;
+  --provence: #638CC7;
+  --baby-blue: #B6CADA;
+  --baby-blue-30: #B6CADA30;
+  --strong-blue: #0070c0;
+  --monument: #7A8387;
+  --stucco: #A58D7F;
+  --peach-quartz: #F5B895;
+  --peach-quartz-30: #F5B89530;
+  --soft-red: #ec6555;
+  --redtidy: #CA225E;
+  --cornhusk: #F4DBB3;
+  --cornhusk-30: #F4DBB330;
+  --opal-gray: #A49E9D;
+  --opal-gray-90: #A49E9D30;
+  --opal-grey: #cecece;
+  --red: #a5150d;
+  --yellow: #F6C700;
+}
+
+
+/*body {
+  /*font-family: 'Muli', sans-serif;
+  /*font-family: font-family: 'Source Sans Pro', Helvetica, sans-serif;*/
+  /*font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  color: #46454d;
+}
+/* Font sizes */
+
+/*h1, h2, h3 {
+  font-family: 'Source Sans Pro', Helvetica, sans-serif;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 0;
+  margin-top: 20px;
+  margin-right: 5px;
+  margin-left: 5px;
+}  
+  
+
+  
+/*h1, h2, h3 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: normal;
+  margin-bottom: 0;
+  margin-top: 20px;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+*/
+
+body {
+  font-family: 'Assistant', sans-serif;
+  color: #1a2a3a;
+}
+h1, h2, h3 {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.remark-slide-content h1 { font-size: 58px; }
+.remark-slide-content h2 { font-size: 42px; }
+.remark-slide-content h3 { font-size: 34px; }
+.remark-slide-content {
+  background-position: center;
+  background-repeat: no-repeat;
+  display: table-cell;
+  font-size: 32px;
+  padding: 0px 30px;
+}
+
+/*main body of slides*/
+
+li { line-height: 1.35em; margin-left: .85em;}
+li p { line-height: 1.15em; }
+ol {
+	list-style: none; 
+	counter-reset: li;
+}
+ol li {
+	counter-increment: li
+}
+
+
+
+a:hover {
+    border-bottom-color: transparent;
+    color: #a5150d !important;
+}
+
+a, a > code {
+  -moz-transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  -webkit-transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  -ms-transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  border-bottom: dotted 1px rgba(160, 160, 160, 0.65);
+  color: inherit;
+  text-decoration: none;
+}
+
+.title {
+  font-size:60px;
+  padding: 15px 0;
+  font-weight: 700;
+  display:inline-block;
+}
+
+/*.largecode p{
+  font-size:30px;
+  font-family: monospace;
+  margin: 0;
+}*/
+
+.thesisplot img{
+  height: 400px;
+}
+
+/*.larger p {
+  font-size: 36px;
+}
+*/
+
+/* Font sizes */
+
+.rotate-45 {transform: rotate(45deg); }
+.vlarge { font-size: 160%; }
+.blarge { font-size: 140%; }
+.large { font-size: 120%; }
+.small { font-size: 80%; }
+.xsmall { font-size: 60%; }
+.tiny { font-size: 40%; }
+
+.float-right {
+  float: right;
+}
+
+.hljs-github .hljs {
+  background: rgba(248, 248, 248, .8);
+  border-radius: 10px;
+}
+
+.box-12 {
+  width: 100%;
+  border-radius: 25px;
+  padding: 5px 0px 5px 25px;
+  background-color: #ffffffbb;
+}
+
+.box-12.opaque {
+  width: 100%;
+  border-radius: 25px;
+  padding: 5px 0px 5px 25px;
+  background-color: #ffffff;
+}
+
+.box-12 p{
+  margin: 10px 20px 0px 0px;
+}
+
+/* Custom boxes */
+.discussion, .take-home {
+  padding: 5px 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.discussion{
+  border-left: solid 5px var(--opal-gray);
+  background-color: var(--opal-gray-30);
+}
+.discussion:before{
+  content: "Discussion";
+  font-size: 150%;
+  font-weight: bold;
+  color: var(--monument);
+  margin-bottom: 10px;
+}
+/* your turns */
+
+.your-turn {
+  background-color: #F4DBB3;
+  color: #000000;
+}
+
+.your-turn a {
+  color: #fff !important;
+}
+
+.your-turn a:hover,
+.your-turn a:active {
+  color: #CD4173 !important;
+}
+
+
+.your-turn h1 {
+  color: #cd4173; /* less intense magenta */
+  font-size: 3.5em;
+}
+
+
+.your-turn h1:before {
+    content: "";
+    display: inline-block;
+    background-image: url("../../images/bird-turn.png");
+    background-repeat: no-repeat;
+    width: 145px;
+    height: 100px;
+    float: left;
+    background-size: contain;
+    padding-right: 10px;
+}
+.take-home {
+  border-left: solid 5px var(--opal-gray);
+  background-color: var(--opal-gray-30);
+}
+.take-home:before{
+  content: "Take home";
+  font-size: 150%;
+  font-weight: bold;
+  color: var(--monument);
+  margin-bottom: 10px;
+}
+
+.alert {
+  border-color: #ef342a;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.sticker-float img{
+	height: 90px;
+	position: absolute;
+	top: 1em;
+	right: 1em;
+}
+
+.face-border img{
+  height: 200px;
+  border-radius: 25%;
+}
+
+.sticker-left img{
+	height: 150px;
+	padding-right: 20px;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.sticker-content-right img{
+  display: inherit;
+}
+
+.sticker img{
+  height: 200px;
+}
+
+
+.footnote {
+  position: absolute;
+  bottom: 1em;
+  font-style: italic;
+  font-size: 70%;
+}
+
+.shadowText {
+  text-shadow: 0 0 20px #333;
+}
+
+.center {
+  text-align: center;
+}
+
+.bottom {
+  position:absolute;
+  bottom:33px;
+}
+
+
+.remark-code-line-highlighted {
+  background-color: #d0e4a9;
+}
+
+code {
+  background: #f8f8f8;
+  border-radius: 5px;
+}
+
+/* fint size of r code 
+.r.remark-code {
+  font-size: 85%;
+  border: 1px solid #fff;
+  box-shadow: 5px 5px 5px #eee;
+  padding: 0.25em;
+  overflow-x: auto;
+  border-radius: 0px; 
+  color: #494949;
+}
+*/
+
+/* font size output of r code */
+.remark-code, .remark-inline-code { 
+  font-family: 'Source Code Pro'; 
+  font-size: 80%;
+}
+
+
+.remark-code, .remark-code-line { 
+  font-family: 'Source Code Pro'; 
+  font-size: 82%; 
+}
+
+
+/* Two-column layout */
+.left-column {
+  color: #777;
+  width: 20%;
+  height: 92%;
+  float: left;
+}
+  .left-column h2:last-of-type, .left-column h3:last-child {
+    color: #000;
+  }
+.right-column {
+  width: 75%;
+  float: right;
+}
+
+/* Four column layout */
+.four-column {
+  float: left;
+  width: 25%;
+  text-align: center;
+}
+
+/* Three column layout */
+.three-column {
+  float: left;
+  width: 33%;
+  text-align: center;
+}
+
+
+.pull-left {
+  float: left;
+  width: 47%;
+}
+.pull-right {
+  float: right;
+  width: 47%;
+}
+
+.pull-right ~ * {
+  clear: both;
+}
+
+/*Left 70% - Right 30% */
+.pull-left1 {
+  width: 70%;
+  float: left;
+}
+
+.pull-right1 {
+  width: 30%;
+  float: right;
+}
+
+  /*Left 30% - Right 70% */
+  
+.pull-left2 {
+  width: 36%;
+  float: left;
+}
+
+.pull-right2 {
+  width: 63%;
+  float: right;
+}
+
+.plot-right-absolute{
+  position: absolute;
+  width: 55%;
+  right: 10px;
+  top: 10%;
+}
+
+.full-width{
+  width: 100%;
+}
+
+.full-width p{
+  margin: 3px;
+}
+
+
+.table{
+	width: 100%;
+	height: 100%
+	text-align: center;
+  background-color: #fbfbfb;
+  color: #333333;
+}
+
+.table > tbody > tr > td.success {
+	background-color: #dff0d8;
+}
+
+.table > tbody > tr > td.warning {
+	background-color: #fcf8e3;
+}
+
+
+
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 50px 10px;
+  padding: 10px 30px;
+  quotes: "\201C""\201D""\2018""\2019";
+  font-style: italic;
+  font-size: 36px;
+}
+
+table {
+  margin: auto;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+}
+table thead th { border-bottom: 1px solid #ddd; }
+th, td { padding: 5px; }
+thead, tfoot, tr:nth-child(even) { background: #eee }
+
+/* huge tex*/
+
+.huge-bahman-text {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 150%;
+ font-weight: bold;
+ color: var(--red);
+}
+
+.huge-blue-text {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 200%;
+ font-weight: bold;
+ color: var(--classic-blue);
+}
+
+.huge-text {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 400%;
+ font-weight: bold;
+ color: var(--classic-blue);
+}
+.huge-number {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 800%;
+ font-weight: bold;
+ color: var(--strong-blue);
+}
+
+.big-number {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 400%;
+ font-weight: bold;
+ color: var(--strong-blue);
+}
+
+/* Handwriting */
+.hand{
+  font-family: 'Gochi Hand', cursive;
+  color: var(--strong-blue);
+  font-size: 200%;
+}
+.hand-large{
+  font-family: 'Gochi Hand', cursive;
+  color: var(--strong-blue);
+  font-size: 400%;
+}
+
+/* Font colors */
+.pink {
+  color: var(--peach-quartz);
+}
+
+.sred {
+  color: var(--soft-red);
+}
+
+.remember {
+  color: var(--redtidy);
+}
+
+.purple{ color: #c077af; }
+.red { color: #ef342a; }
+.orange { color: #f57125; }
+.blue { color: #22b6ed; }
+.green { color: #1fb27f; }
+.yellow { color: #faca07; }
+.brown {color: #a84d18; }
+.gray {color: #525252; }
+
+/* 
+CSS from datavizm20.classes.andrewheiss.com
+*/
+
+/*
+Wider pull left/right
+*/
+.pull-left-wide {
+  float: left;
+  width: 65%;
+}
+
+.pull-left-narrow {
+  float: left;
+  width: 32%;
+}
+
+.pull-right-wide {
+  float: right;
+  width: 65%;
+}
+
+.pull-right-narrow {
+  float: right;
+  width: 32%;
+}
+
+.pull-right-narrow ~ *,
+.pull-right-wide ~ * {
+  clear: both;
+}
+
+
+/* 
+Three column layout
+*/
+.pull-left-3 {
+  float: left;
+  width: 30%;
+  padding: 0 2.5% 0 0;
+}
+
+.pull-middle-3 {
+  float: left;
+  width: 30%;
+  padding: 0 2.5%;
+}
+
+.pull-right-3 {
+  float: right;
+  width: 30%;
+  padding: 0 0 0 2.5%;
+}
+
+.pull-right-3 ~ * {
+  clear: both;
+}
+
+.left-code {
+  color: #777;
+  width: 48%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 50%;
+  float: right;
+  padding-left: 1%;
+}
+
+
+.alert-note {
+  color: #333;
+  background-color: #fff;
+  border-top: 2px solid #004346;
+  border-radius: 0px; /*undo rounded corners*/
+  border-right-style: none;
+  border-bottom-style: none;
+  border-left-style: none;
+  padding: 23px 10px 21px 10px;
+}
+
+
+.alert-bottom {
+  color: #333;
+  background-color: #fff;
+  border-bottom: 2px solid #004346;
+  border-radius: 0px; /*undo rounded corners*/
+  border-right-style: none;
+  border-top-style: none;
+  border-left-style: none;
+  padding: 23px 10px 1px 10px;
+}
+
+.alert-bottom1 {
+  color: #CA225E;
+  background-color: none;
+  border-bottom: 2px solid #004346;
+  border-radius: none;
+  border-right-style: none;
+  border-top-style: none;
+  border-left-style: none;
+  padding: none;
+}
+
+#slideshow .slide .content code {
+  font-size: 0.8em;
+}
+#slideshow .slide .content pre code {
+  font-size: 0.9em;
+  padding: 15px;
+}
+.inverse {
+  background: #69686d;
+  color: #f2f2f6;
+}
+.inverse a {
+  color: #f2f2f6;
+}
+.inverse h1, .inverse h2 {
+  color: #f2f2f6;
+  font-size: 72px;
+  line-height: 1.2em;
+}
+
+
+/* live code */
+
+.live-code {
+  background-color: #000;
+  color: #fff;
+}
+
+.live-code h1 {
+  color: #fff;
+  text-shadow: 1px 1px 2px #1f5386;
+  font-size: 3.5em;
+}
+
+.live-code h1:before {
+    content: "";
+    display: inline-block;
+    background: url("../Live-code.png") no-repeat;
+    width: 100px;
+    height: 100px;
+    float: left;
+    background-size: 100px;
+    padding-right: 50px;
+}
+
+.your-turn .remark-inline-code,
+.live-code .remark-inline-code {
+  color: #84cae1; /* perch-bird blue */
+}
+
+.title-slide h1 {
+  font-size: 42px;
+  color: #1a467b;
+  line-height: 1.2em;
+  text-align: left !important;
+  position: absolute;
+  top: 5%;
+  border-bottom: 5px solid #1a467b;
+}
+
+.title-slide h2 {
+  padding-top: 98px;
+  padding-bottom: 98px;
+  font-size: 78px;
+  color: #1a2a3a;
+  line-height: 1.2em;
+  text-align: center !important;
+}
+
+.title-slide h3 {
+  font-family: 'Caveat', cursive;
+  font-size: 48px;
+  color: #69686d;
+  bottom: 10%;
+  text-align: center !important;
+}
+
+
+.title-slide .remark-slide-number {
+  display: none;
+}
+/* Slide-specific styling */
+#slide-inverse .footnote {
+  bottom: 12px;
+  left: 20px;
+}
+#slide-how .slides {
+  font-size: 0.9em;
+  position: absolute;
+  top:  151px;
+  right: 140px;
+}
+#slide-how .slides h3 {
+  margin-top: 0.2em;
+}
+#slide-how .slides .first, #slide-how .slides .second {
+  padding: 1px 20px;
+  height: 90px;
+  width: 120px;
+  -moz-box-shadow: 0 0 10px #777;
+  -webkit-box-shadow: 0 0 10px #777;
+  box-shadow: 0 0 10px #777;
+}
+#slide-how .slides .first {
+  background: #fff;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  z-index: 1;
+}
+#slide-how .slides .second {
+  position: relative;
+  background: #fff;
+  z-index: 0;
+}

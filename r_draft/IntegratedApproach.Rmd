@@ -1,0 +1,216 @@
+---
+title: "Characteristics"
+author: "Dejan Mircetic"
+date: "19 March 2019"
+output: html_document
+---
+
+#Packages
+```{r,message=FALSE}
+time_0<-Sys.time()
+
+library(M4comp2018)
+library(tsfeatures)
+library(fpp)
+library(MAPA)
+#library(tsutils)
+library(Mcomp)
+```
+
+#Choosing between the M3 and M4 data
+```{r data}
+#database<-("M3")
+database<-("M4")
+
+if (database[1]=="M3"){
+data("M3")
+Mdata<-M3
+}else{Mdata<-M4}
+```
+
+#Observed series
+```{r Number of the series}
+N=length(Mdata)
+```
+
+#Observed models
+```{r models}
+#models<-c("ets","naive","tbats","ARIMA","MAPA")
+#models<-c("naive","MAPA")
+#models<-c("tbats","ARIMA")
+#models<-c("ARIMA")
+#models<-c("ets")
+models<-c("naive","ets","ARIMA","Neural","MAPA")
+```
+
+#Extracting features
+```{r features, cache=TRUE,dependson=database,dependson=N}
+Mseries<-list(rep(NA,N))
+series_names<-c(rep(NA,N))
+
+for(k in(1:N)){
+  Mseries[[k]]<-Mdata[[k]]$x
+  series_names[k]<-Mdata[[k]]$st
+}
+names(Mseries)<-series_names
+
+features<-tsfeatures(Mseries)
+```
+
+#Max number of future forecasts (h-steps ahead)
+```{r}
+range<-rep(NA,length(Mdata))
+for(i in (1:length(Mdata))){
+  range[i]<-length(Mdata[[i]]$xx)
+}
+hsteps<-range[which.max(range)]#max number of future forecasts
+```
+
+```{r}
+AllForecasts<-array(dim=c(N,hsteps,length(models)),dimnames = list(c(),c(paste(rep(c("t+"),hsteps),1:hsteps)),c(models)))
+
+AllErrors<-array(dim=c(N,8,length(models)),dimnames = list(c(),c("ME","RMSE","MAE","MPE","MAPE","MASE","ACF1","Theil's U"),c(models)))
+
+```
+
+#Accuracy function for models other than class forecast
+```{r}
+precision<-function(y,i,...){
+  
+  if (class(y)=="forecast"){
+    Error<-c(accuracy(y,Mdata[[i]]$xx)[2,])
+  }else{
+    
+  ynaive<-naive(Mdata[[i]]$x,h=length(Mdata[[i]]$xx))
+  MAE.naive.trening<-accuracy(ynaive,Mdata[[i]]$xx)[1,3]
+  MAE.model.test<-accuracy(y,Mdata[[i]]$xx)[,3]
+  
+  MASE<-MAE.model.test/MAE.naive.trening
+  
+  Error<-c(accuracy(y,Mdata[[i]]$xx)[,1:5],MASE,accuracy(y,Mdata[[i]]$xx)[,6:7])
+  names(Error)<-c("ME","RMSE","MAE","MPE","MAPE","MASE","ACF1","Theil's U")
+  }
+  return(Error)
+}
+```
+
+#Forecasts of different models
+```{r forecasting,cache=TRUE,dependson=database,dependson=models,dependson=N}
+for(k in (1:length(models))){
+Forecasts<-matrix(rep(NA,hsteps*N),nrow=N)
+#prognoye u forecast funkciji mogu biti mogu od ets, Arima, bats, tbats, or nnetar.
+switch(models[k],
+       "ets"={y1<-forecast(Mdata[[1]]$x,h=length(Mdata[[1]]$xx))},
+       "naive"={y1<-naive(Mdata[[1]]$x,h=length(Mdata[[1]]$xx))},
+       "ARIMA"={y1<-forecast(auto.arima(Mdata[[1]]$x),h=length(Mdata[[1]]$xx))},
+       "tbats"={y1<-forecast(tbats(Mdata[[1]]$x),h=length(Mdata[[1]]$xx))},
+       "MAPA"={y1<-mapa(Mdata[[1]]$x,fh=length(Mdata[[1]]$xx))$outfor},
+       "Neural"={y1<-forecast(nnetar(Mdata[[1]]$x),h=length(Mdata[[1]]$xx))}
+       )
+if (class(y1)!="forecast"){
+  Forecasts[1,1:length(Mdata[[1]]$xx)]<-y1
+}else{
+  Forecasts[1,1:length(Mdata[[1]]$xx)]<-y1$mean
+}
+Error<-precision(y1,1)
+
+for(i in (2:N)){
+  if(i %% 1000 == 0){cat(i);}
+  switch(models[k],
+       "ets"={yn<-forecast(Mdata[[i]]$x,h=length(Mdata[[i]]$xx))},
+       "naive"={yn<-naive(Mdata[[i]]$x,h=length(Mdata[[i]]$xx))},
+       "ARIMA"={yn<-forecast(auto.arima(Mdata[[i]]$x),h=length(Mdata[[i]]$xx))},
+       "tbats"={yn<-forecast(tbats(Mdata[[i]]$x),h=length(Mdata[[i]]$xx))},
+       "MAPA"={yn<-mapa(Mdata[[i]]$x,fh=length(Mdata[[i]]$xx))$outfor},
+       "Neural"={yn<-forecast(nnetar(Mdata[[i]]$x),h=length(Mdata[[i]]$xx))}
+       )
+  
+  if (class(yn)!="forecast"){
+  Forecasts[1,1:length(Mdata[[i]]$xx)]<-yn
+  }else{
+  Forecasts[i,1:length(Mdata[[i]]$xx)]<-yn$mean
+  }
+  Error<-rbind(Error,precision(yn,i))
+}
+  AllForecasts[,,k]<-Forecasts
+  AllErrors[,,k]<-Error
+}
+
+#AllErrors
+#AllForecasts
+```
+
+```{r}
+write.table(AllErrors, "AllErrors.txt", sep=",", row.names = FALSE)
+write.table(AllForecasts, "AllForecasts.txt", sep=",", row.names = FALSE)
+```
+
+#Forming the data base and Predicting the forecasting error
+```{r regression}
+for(i in 1:length(models)){
+  print(models[i])
+  results<-cbind(features,AllErrors[,c("RMSE","MAPE"),i])
+  lmape<-lm(MAPE~.-frequency-nperiods-seasonal_period-RMSE,data=results);print(summary(lmape))
+  lrmse<-lm(RMSE~.-frequency-nperiods-seasonal_period-MAPE,data=results);print(summary(lrmse))
+}
+```
+
+#Mutal comparison
+```{r}
+bestperforming<-function(AllErrors){
+  Best<-matrix(rep(NA,dim(AllErrors)[1]*dim(AllErrors)[2]),ncol=dim(AllErrors)[2])
+  colnames(Best)<-c("ME","RMSE","MAE","MPE","MAPE","MASE","ACF1","Theil's U")
+  #browser()
+  for(i in 1: dim(AllErrors)[1]){
+    for(j in 1:6){
+      minimum<-AllErrors[i,j,1]
+      bestmodel<-1
+      for(m in 1:length(models)){
+        #print(i)
+        if(AllErrors[i,j,m]<minimum){
+          minimum<-AllErrors[i,j,m]
+          bestmodel<-m
+        }
+      }
+      Best[i,j]<-models[bestmodel]
+    }
+  }
+  return(Best)
+}
+Best<-bestperforming(AllErrors)
+
+summary(Best)
+```
+
+#Relativ error Hyndman
+```{r}
+RE<-matrix(nrow = N,ncol = length(models), dimnames = list(c(),c(models)))
+
+criteria<-c("MAE")
+for(k in (1:length(models))){
+  RE[,k]<-AllErrors[,criteria,k]/AllErrors[,criteria,"naive"]
+}
+
+PB<-(1-RE)*100
+
+if(length(which(is.na(PB[,1])))!=0){
+  PB<-PB[-which(is.na(PB[,1])),]
+}
+summary(PB)
+```
+
+```{r}
+time_1<-Sys.time();time_1-time_0
+```
+
+#To Do:
+
+#Add TA algorithm
+#make classification algorithm to classify findings
+#Case 1-Reproduce Hyndman earlier paper with SOM maps
+#Slucaj 2-Samo dvije klase-Svi modeli VS TA
+#Greska kao i oni u svom radu
+#Standaradizovati podatke prije regresije
+#Rijesiti problem sa MASE greskom kod MAPA modela
+#Vidjeti tamo kod Best modela da li je dobro uradjeno u smislu kada dva modela imaju istu gresku
+#Standarizovati podatke prije regresije, takodje prije i klasifikacije
