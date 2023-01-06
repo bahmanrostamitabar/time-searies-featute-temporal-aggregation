@@ -1101,9 +1101,70 @@ nulll=rep("TA",dim(test.data)[1])
 (Nulleval <- c(classificationMetrics(ClassTable[-train,"marks"],as.factor(nulll),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(nulll),FALSE)$auc,classificationMetrics(ClassTable[-train,"marks"],as.factor(nulll),posClass = "TA","totU",cbM)))
 ```
 
+
+# Neural Network
+```{r neural network}
+library(nnet)
+
+train.data<-ClassTable[train,]
+test.data<-ClassTable[-train,]
+```
+
+# Chossing the best setup
+```{r, eval=TRUE}
+test.err=double(10)
+AUC.err=double(10)
+f.err=double(10)
+for(size in 1:10){
+  fit=nnet(marks~.,data=train.data, size=size, maxit=500, decay=0.001,rang = 0.1)
+  nn.pred=predict(fit,test.data, type="class")
+  test.err[size]=(classificationMetrics(nn.pred,test.data[,"marks"])["err"]*100)
+  AUC.err[size]=roc.curve(as.factor(test.data[,"marks"]),as.factor(nn.pred),FALSE)$auc
+  f.err[size]=(classificationMetrics(nn.pred,test.data[,"marks"])["F"])
+  cat(size," ")
+}
+matplot(1:size,test.err,pch=19,col=c("red"),type="b",ylab="Misclassification Error")
+legend("topright",legend=c("Test"),pch=19,col=c("red"))#From the graph size=2
+
+
+matplot(1:size,AUC.err,pch=19,col=c("red"),type="b",ylab="AUC")
+legend("topright",legend=c("AUC"),pch=19,col=c("red"))#From the graph size=10
+
+matplot(1:size,f.err,pch=19,col=c("red"),type="b",ylab="F Error")
+legend("topright",legend=c("F"),pch=19,col=c("red"))#From the graph size=10
+
+# The optimal setup is 10 neurons
+```
+
+# Neural optimal fit
+```{r nnfit}
+fit_op <- nnet(marks~.,data=train.data, size=10, maxit=500, decay=0.001, rang = 0.1)
+fit_op
+```
+
+# Optimal threshold
+```{r}
+nn.probs=predict(fit_op,test.data)
+cut_nn <- cutoff(as.numeric(nn.probs))
+
+i<-cut_nn
+nn.pred=ifelse(nn.probs>i,"TA","Direct")
+t<-table(nn.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+1-mean(nn.pred==ClassTable[-train,"marks"])
+```
+
+
+# Neural network evaluation
+```{r neural netwok evaluation}
+nn.pred <- as.factor(nn.pred)
+(NNeval <- c(classificationMetrics(test.data[,"marks"],nn.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],nn.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],nn.pred,posClass = "TA","totU",cbM)))
+```
+
 # Evaluation table
 ```{r}
-(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval))
+(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,NNeval))
 ```
 
 #Add that Xg Boost algoritam!!!
@@ -1134,9 +1195,10 @@ svm.pred <- as.factor(svm.pred)
   class8 <- classificator(ideal_matrix,boost.pred2,Ideal = TRUE)
   class9 <- classificator(ideal_matrix,svm.pred,Ideal = TRUE)
   class10 <- classificator(ideal_matrix,nulll,Ideal = TRUE)
+  class11 <- classificator(ideal_matrix,nn.pred,Ideal = TRUE)
   
-  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4])
-  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null")
+  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4])
+  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "NNet")
   nemenyi(as.matrix(table_all),plottype="vmcb")
 
   #without ideal classificator
@@ -1147,9 +1209,9 @@ svm.pred <- as.factor(svm.pred)
 ```{r}
 png("Fig_MCB_all.png",  width = 300, height = 150, units = 'mm', res = 300)
 
-colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null")
+colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","Neural Network")
   
-  #without ideal and null classificators
+  #without ideal and null classifications
   nemenyi(as.matrix(table_all[,-c(3,13)]),plottype="vmcb")
 
 dev.off()
@@ -1169,13 +1231,14 @@ GAM_CB <- sum(table(GAM.pred,ClassTable[-train,"marks"])*cbM)
 rf_CB <- sum(table(rf.pred,ClassTable[-train,"marks"])*cbM)
 boost_CB <- sum(table(boost.pred2,ClassTable[-train,"marks"])*cbM)
 svm_CB <- sum(table(svm.pred,ClassTable[-train,"marks"])*cbM)
+nn_CB <- sum(table(nn.pred,ClassTable[-train,"marks"])*cbM)
 
-table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB))
-colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM")
+table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB))
+colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Neural Network")
 rownames(table_CB) <- c("Overall RMSSE")
 
 #export table
-write.table(table_CB, file = "../Temporal-Aggregation/shiny app/ML_models/table_CB.txt", sep = "\t",row.names=TRUE)
+ write.table(table_CB, file = "../Temporal-Aggregation/shiny app/ML_models/table_CB.txt", sep = "\t",row.names=TRUE)
 
 ```
 

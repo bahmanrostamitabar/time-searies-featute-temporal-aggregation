@@ -46,7 +46,7 @@ legend("topright",legend=c("F"),pch=19,col=c("red"))#From the graph mtry=10
 source("cutoff_nn.R")
 
 nn.probs=predict(fit,test2)
-cut_nn <- cutoff_nn(nn.probs)
+cut_nn <- cutoff(as.numeric(nn.probs))
 
 
 i<-cut_nn
