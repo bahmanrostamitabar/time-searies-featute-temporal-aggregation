@@ -1102,7 +1102,7 @@ nulll=rep("TA",dim(test.data)[1])
 ```
 
 
-# Neural Network
+# Feedforward neural network
 ```{r neural network}
 library(nnet)
 
@@ -1136,7 +1136,7 @@ legend("topright",legend=c("F"),pch=19,col=c("red"))#From the graph size=10
 # The optimal setup is 10 neurons
 ```
 
-# Neural optimal fit
+# FNN optimal fit
 ```{r nnfit}
 fit_op <- nnet(marks~.,data=train.data, size=10, maxit=500, decay=0.001, rang = 0.1)
 fit_op
@@ -1144,8 +1144,9 @@ fit_op
 
 # Optimal threshold
 ```{r}
+source("cutoff_nn.R")# jedina razlika u odnosu na stadnardni cuttoff kod je sto ne max auc nego minimizujes gresku i na taj ancin poboljsavas ishod na slikama ispod za nn modele
 nn.probs=predict(fit_op,test.data)
-cut_nn <- cutoff(as.numeric(nn.probs))
+cut_nn <- cutoff_nn(as.numeric(nn.probs))
 
 i<-cut_nn
 nn.pred=ifelse(nn.probs>i,"TA","Direct")
@@ -1155,20 +1156,171 @@ t<-table(nn.pred,ClassTable[-train,"marks"]);print(t)
 1-mean(nn.pred==ClassTable[-train,"marks"])
 ```
 
-
-# Neural network evaluation
+# FNN network evaluation
 ```{r neural netwok evaluation}
 nn.pred <- as.factor(nn.pred)
-(NNeval <- c(classificationMetrics(test.data[,"marks"],nn.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],nn.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],nn.pred,posClass = "TA","totU",cbM)))
+(FNNeval <- c(classificationMetrics(test.data[,"marks"],nn.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],nn.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],nn.pred,posClass = "TA","totU",cbM)))
 ```
 
-# Evaluation table
+# Deep learning with tensors and neural networks
+```{r trch}
+library(torch)
+
+dataset <- ClassTable[,-1]
+dataset$model_class <- as.numeric(dataset$marks=='TA')
+dataset <- dataset[,-42]
+View(dataset)
+dim(dataset)
+train_idx <- train
+
+df_dataset <- dataset(
+  name = "dataset",
+
+  initialize = function(df, feature_variables, response_variable) {
+    
+    self$df <- df[, feature_variables]
+    self$response_variable <- df[[response_variable]]
+  },
+  
+  .getitem = function(index) {
+    response <- torch_tensor(self$response_variable[index], dtype = torch_float())
+    x <- torch_tensor(as.numeric(self$df[index,]))
+    
+    list(x = x, y = response)
+  },
+  
+  .length = function() {
+    length(self$response_variable)
+  }
+)
+
+feature_var <- c(colnames(dataset)[1:41])
+
+response <- 'model_class'
+
+dataset_train <- df_dataset(dataset[train_idx,], 
+                             feature_variables = feature_var, 
+                             response_variable = response)
+
+dataset_test <- df_dataset(dataset[-train_idx,],
+                            feature_variables = feature_var, 
+                            response_variable = response)
+
+dataset_train$.getitem(100)
+
+dl_train <- dataloader(dataset_train, shuffle = TRUE)
+dl_test <-  dataloader(dataset_test)
+```
+
+# Desing the network
 ```{r}
-(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,NNeval))
+net <- nn_module(
+  "Net",
+  initialize = function() {
+    self$fc1 <- nn_linear(length(feature_var), 20)
+    self$fc2 <- nn_linear(20,10)
+    self$fc3 <- nn_linear(10, 1)
+  },
+  forward = function(x) {
+    x %>% 
+      self$fc1() %>% 
+      nnf_relu() %>% 
+      self$fc2() %>% 
+      nnf_relu() %>%
+      self$fc3() 
+  }
+)
+model <- net()
+```
+
+# Optimize the net
+```{r}
+optimizer <- optim_adam(model$parameters)
+
+for (epoch in 1:10) {
+  
+  l <- c()
+  
+  for (b in enumerate(dl_train)) {
+    optimizer$zero_grad()
+    output <- model(b[[1]])
+    loss <- nnf_binary_cross_entropy_with_logits(output,b[[2]])
+    loss$backward()
+    optimizer$step()
+    l <- c(l, loss$item())
+  }
+  
+  cat(sprintf("Loss at epoch %d: %3f\n", epoch, mean(l)))
+}
+
+model$eval()
+
+
+test_losses <- c()
+
+for (b in enumerate(dl_test)) {
+  output <- model(b[[1]])
+  loss <- nnf_binary_cross_entropy_with_logits(output, b[[2]])
+  test_losses <- c(test_losses, loss$item())
+}
+
+mean(test_losses)
+```
+
+# Generate the class probabilities
+```{r}
+# Placeholder vector for probabilities
+out_log_odds = c()
+
+for (b in enumerate(dl_test)) {
+  
+  # get log odds
+  output <- model(b[[1]])
+  
+  # convert to df and append
+  log_odds = output$data() %>% as.array() %>% .[,1]
+  out_log_odds <- c(out_log_odds, log_odds)
+  prob <-exp(out_log_odds)/(1+exp(out_log_odds))
+}
+
+head(out_log_odds)
+head(prob);summary(prob)
+
+```
+
+## initial class prediction from log odds
+```{r}
+predicted <- as.numeric(prob>0.5)
+head(predicted)
+mean(predicted ==dataset[-train_idx,"model_class"])
+```
+
+## Best cutoff
+```{r}
+cut_nn <- cutoff_nn(prob)
+
+i<-cut_nn
+t.pred=ifelse(prob>i,"TA","Direct")
+t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+1-mean(t.pred==ClassTable[-train,"marks"])
+```
+
+# Evaluation of DL torch
+```{r}
+t.pred <- as.factor(t.pred)
+(Teval <- c(classificationMetrics(test.data[,"marks"],t.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],t.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],t.pred,posClass = "TA","totU",cbM)))
 ```
 
 #Add that Xg Boost algoritam!!!
 ###
+
+
+# Evaluation table
+```{r}
+(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval))
+```
 
 #Evaluation on the classification performance
 ```{r}
@@ -1196,9 +1348,10 @@ svm.pred <- as.factor(svm.pred)
   class9 <- classificator(ideal_matrix,svm.pred,Ideal = TRUE)
   class10 <- classificator(ideal_matrix,nulll,Ideal = TRUE)
   class11 <- classificator(ideal_matrix,nn.pred,Ideal = TRUE)
+  class12 <- classificator(ideal_matrix,t.pred,Ideal = TRUE)
   
-  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4])
-  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "NNet")
+  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4],class12[,4])
+  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "FNN", "DL_Torch")
   nemenyi(as.matrix(table_all),plottype="vmcb")
 
   #without ideal classificator
@@ -1209,7 +1362,7 @@ svm.pred <- as.factor(svm.pred)
 ```{r}
 png("Fig_MCB_all.png",  width = 300, height = 150, units = 'mm', res = 300)
 
-colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","Neural Network")
+colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch")
   
   #without ideal and null classifications
   nemenyi(as.matrix(table_all[,-c(3,13)]),plottype="vmcb")
@@ -1232,14 +1385,14 @@ rf_CB <- sum(table(rf.pred,ClassTable[-train,"marks"])*cbM)
 boost_CB <- sum(table(boost.pred2,ClassTable[-train,"marks"])*cbM)
 svm_CB <- sum(table(svm.pred,ClassTable[-train,"marks"])*cbM)
 nn_CB <- sum(table(nn.pred,ClassTable[-train,"marks"])*cbM)
+nn_DL <- sum(table(t.pred,ClassTable[-train,"marks"])*cbM)
 
-table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB))
-colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Neural Network")
+table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB,nn_DL))
+colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","FNN","DL Torch")
 rownames(table_CB) <- c("Overall RMSSE")
 
 #export table
- write.table(table_CB, file = "../Temporal-Aggregation/shiny app/ML_models/table_CB.txt", sep = "\t",row.names=TRUE)
-
+ write.table(table_CB, file = "shiny app/ML_models/table_CB.txt", sep = "\t",row.names=TRUE)
 ```
 
 #Most important pairs

@@ -1,5 +1,5 @@
 
-cutoff <- function(lr.probs){
+cutoff_nn <- function(lr.probs){
   
   cutoff<-seq(from=quantile(lr.probs)[1],to=quantile(lr.probs)[5],by=0.01)
   #cutoff<-seq(from=0.5,to=0.7,by=0.01)

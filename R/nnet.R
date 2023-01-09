@@ -79,6 +79,10 @@ roc.curve(as.factor(test.data[,"marks"]),as.factor(nn.pred),FALSE)$auc
 
 library(neuralnet)
 
+# https://www.r-bloggers.com/2017/06/neural-networks-exercises-part-2/
+# https://journal.r-project.org/archive/2010-1/RJournal_2010-1_Guenther+Fritsch.pdf
+# https://www.r-bloggers.com/2013/07/using-neural-networks-for-credit-scoring-a-simple-example/
+
 # R-Session 11 - Statistical Learning - Neural Networks
 #https://www.youtube.com/watch?v=lTMqXSSjCvk
 
