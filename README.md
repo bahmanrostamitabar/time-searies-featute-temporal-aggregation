@@ -18,7 +18,7 @@ There is a lot of job in front of us, let's get do it. Updates coming soon...
 
 # Update 
 
-The paper in is in the review process of the [Neurocomputing journal] (https://www.sciencedirect.com/journal/neurocomputing)...
+The paper in is under review in the [Neurocomputing journal](https://www.sciencedirect.com/journal/neurocomputing).
 
 # Future research
 
@@ -26,8 +26,12 @@ Join us in a future research!!! We are looking for colaborators!!!
 
 In you love dealing with ML, forecasting and time series...and you find your self interested in a given topic, you are welcome to join us in a future researches! 
 
-Theare are several directions in which we plan to continue given research, but the first one will be related to the extanding a given research with inntermitent series and extanding the group of ML models with convolution and recurecnt neural networks. We are very impatient to see what story will intermittent series will that reveal to us...
+There are several directions in which we plan to continue given research, but the first one will be related to the extanding a given research with inntermitent series and extending the group of ML models with convolution and recurrent neural networks. We are very impatient to see what story will intermittent series will that reveal to us...
+
+# Research methodology
+
+![Fig 1. Research methodology.](experiment_design.png)
 
 # Some of the findings...
 
-![Fig 1. Timse series characteristics.](Fig_pairs.png) 
+![Fig 2. Timse series characteristics & temporal approaches.](Fig_pairs.png) 

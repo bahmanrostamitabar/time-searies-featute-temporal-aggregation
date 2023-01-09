@@ -1101,7 +1101,6 @@ nulll=rep("TA",dim(test.data)[1])
 (Nulleval <- c(classificationMetrics(ClassTable[-train,"marks"],as.factor(nulll),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(nulll),FALSE)$auc,classificationMetrics(ClassTable[-train,"marks"],as.factor(nulll),posClass = "TA","totU",cbM)))
 ```
 
-
 # Feedforward neural network
 ```{r neural network}
 library(nnet)
