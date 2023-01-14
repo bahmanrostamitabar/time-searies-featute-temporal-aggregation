@@ -1,7 +1,8 @@
 
 cutoff_nn <- function(lr.probs){
-  
-  cutoff<-seq(from=quantile(lr.probs)[1],to=quantile(lr.probs)[5],by=0.01)
+  #browser()
+  #5
+  cutoff<-seq(from=quantile(lr.probs)[1],to=quantile(lr.probs)[4],by=0.01)
   #cutoff<-seq(from=0.5,to=0.7,by=0.01)
   
   Misclas<-rep(NA,length(cutoff))

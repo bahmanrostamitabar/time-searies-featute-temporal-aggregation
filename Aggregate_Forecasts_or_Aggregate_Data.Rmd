@@ -30,6 +30,14 @@ library(tsfeatures)
 library(tsutils)
 library(ExtendedAccuracy)
 library(ggplot2)
+library(torch)
+library(randomForest)
+library(plotmo)
+library("iml")
+library(gbm)
+library(e1071)
+library(ROCR)
+library(nnet)
 #devtools::install_github("DejanMircetic/ExtendedAccuracy")#Draft version of package in progress
 ```
 
@@ -668,7 +676,7 @@ table(tree.pred,ClassTable[-train,"marks"])
 
 # Random Forests
 ```{r}
-require(randomForest)
+# require(randomForest)
 
 #rf<-randomForest(marks~., data=train.data);summary(rf)
 #rf
@@ -738,12 +746,17 @@ train.data1<-ClassTable1[train,]
 test.data1<-ClassTable1[-train,]
 
 #rf2=randomForest(marks~.,data=train.data1,mtry=10,ntree=4000, importance=TRUE);rf2
+#rf2 <- randomForest(marks~.,data=train.data1,mtry=25,ntree=4000, importance=TRUE) # testirano je ovo ponovo 14.01. jer je na grafiku gore ispao ovaj setup najbolji ali kada se poredi sa ovim ispod za nijansu je losiji ali je puno sporiji. Tako da je ovaj donji setup sa 10 varijabli i 100 drveca ubjeljivo najbolji.
 rf2=randomForest(marks~.,data=train.data1,mtry=10,ntree=100, importance=TRUE);rf2
   importance(rf2)
   varImpPlot(rf2)
 
 rf.pred<-predict(rf2,test.data1)# ako stavis tyoe = prob dobices vjerovatnoce da pripada jednoj ili drugoj klasi.
-#pred=predict(rf2,ClassTable[-train,],type="prob")
+
+# Isprobano je i sa prob pa je inda preko cuttoff biran odsjecak ali bolje to uradi sam rf sa direktnim klasifikacijama.
+# pred=predict(rf2,ClassTable[-train,],type="prob")
+# vjerovatnoce <- pred[,2]
+# cut_rf <- cutoff_nn(as.numeric(vjerovatnoce))
 
 (classificationMetrics(rf.pred,test.data1[,"marks"],posClass = "TA")["err"]*100)
 
@@ -814,7 +827,7 @@ par(op)
 
 #Interaction partial dependence
 ```{r, eval=FALSE}
-library(plotmo)
+# library(plotmo)
 #plotmo(rf2, pmethod="partdep",col.persp="cyan",degree1 = c(1,2,3,4),degree2 = c(1,2,3,4),ylim = c(1.625,1.635)) # plot first 4 partial dependencies and 4 interactions
 #plotmo(rf2, pmethod="partdep",type="prob",col.persp="cyan",degree1 = c(1,2),degree2 = c(0),ylim = c(0.55,0.65))
 
@@ -851,7 +864,7 @@ plotmo(rf2, pmethod="apartdep",type="prob",nresponse="TA",col.persp="cyan",degre
 ```
 
 ```{r}
-library("iml")
+# library("iml")
 
 a <- 1000
 #a <- 30000
@@ -902,7 +915,7 @@ dev.off()
 
 # 6.Boosting
 ```{r}
-require(gbm)
+# require(gbm)
 train.data[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
 test.data[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
 
@@ -1018,13 +1031,13 @@ roc.curve(test.data[,"marks"],boost.pred)
 ```
 
 ```{r Boosting evaluation}
-(Boostingeval <-c(classificationMetrics(test.data[,"marks"],boost.pred,posClass = "1"),AUC=roc.curve(test.data[,"marks"],boost.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],boost.pred,posClass = 1,"totU",cbM)))
+(Boostingeval <-c(classificationMetrics(test.data[,"marks"],boost.pred2,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],boost.pred2,FALSE)$auc,classificationMetrics(test.data[,"marks"],boost.pred2,posClass = "TA","totU",cbM)))
 ```
 
 #SVM
 #Dugo traje pa to kasnije pokreni
 ```{r}
-library(e1071)
+# library(e1071)
 ```
 
 
@@ -1062,7 +1075,7 @@ fitted=attributes(predict(fit.svm,train.data, decision.values =TRUE))$decision.v
 
 # ROC na trening podacima
 ```{r}
-library(ROCR)
+# library(ROCR)
 rocplot =function (pred,truth,...){
   predob= prediction(pred,truth )
   perf= performance(predob, "tpr", "fpr")
@@ -1103,8 +1116,7 @@ nulll=rep("TA",dim(test.data)[1])
 
 # Feedforward neural network
 ```{r neural network}
-library(nnet)
-
+# library(nnet)
 train.data<-ClassTable[train,]
 test.data<-ClassTable[-train,]
 ```
@@ -1163,8 +1175,6 @@ nn.pred <- as.factor(nn.pred)
 
 # Deep learning with tensors and neural networks
 ```{r trch}
-library(torch)
-
 dataset <- ClassTable[,-1]
 dataset$model_class <- as.numeric(dataset$marks=='TA')
 dataset <- dataset[,-42]
@@ -1207,18 +1217,51 @@ dataset_test <- df_dataset(dataset[-train_idx,],
 
 dataset_train$.getitem(100)
 
-dl_train <- dataloader(dataset_train, shuffle = TRUE)
-dl_test <-  dataloader(dataset_test)
+# This is using all the training data:
+# dl_train <- dataloader(dataset_train, shuffle = TRUE)
+# dl_test <-  dataloader(dataset_test)
+
+# Batch data:
+
+dl_train <- dataloader(dataset_train, batch_size=10000, shuffle = TRUE)
+dl_test <-  dataloader(dataset_test, batch_size=10000)
 ```
 
 # Desing the network
 ```{r}
+# First setup
+# net <- nn_module(
+#   "Net",
+#   initialize = function() {
+#     self$fc1 <- nn_linear(length(feature_var), 20)
+#     self$fc2 <- nn_linear(20,10)
+#     self$fc3 <- nn_linear(10, 1)
+#   },
+#   forward = function(x) {
+#     x %>% 
+#       self$fc1() %>% 
+#       nnf_relu() %>% 
+#       self$fc2() %>% 
+#       nnf_relu() %>%
+#       self$fc3() 
+#   }
+# )
+
+## Optimal setup
+# Deep learning netwrok with 10 hiden layers xy nodes adn xy paramaters to fit.
 net <- nn_module(
   "Net",
   initialize = function() {
-    self$fc1 <- nn_linear(length(feature_var), 20)
-    self$fc2 <- nn_linear(20,10)
-    self$fc3 <- nn_linear(10, 1)
+    self$fc1 <- nn_linear(length(features1), 40)
+    self$fc2 <- nn_linear(40, 30)
+    self$fc3 <- nn_linear(30, 30)
+    self$fc4 <- nn_linear(30, 15)
+    self$fc5 <- nn_linear(15, 15)
+    self$fc6 <- nn_linear(15, 10)
+    self$fc7 <- nn_linear(10, 10)
+    self$fc8 <- nn_linear(10, 5)
+    self$fc9 <- nn_linear(5, 5)
+    self$fc10 <- nn_linear(5, 1)
   },
   forward = function(x) {
     x %>% 
@@ -1226,9 +1269,24 @@ net <- nn_module(
       nnf_relu() %>% 
       self$fc2() %>% 
       nnf_relu() %>%
-      self$fc3() 
+      self$fc3() %>% 
+      nnf_relu() %>%
+      self$fc4() %>% 
+      nnf_relu() %>%
+      self$fc5() %>% 
+      nnf_relu() %>%
+      self$fc6() %>% 
+      nnf_relu() %>%
+      self$fc7() %>% 
+      nnf_relu() %>%
+      self$fc8() %>% 
+      nnf_relu() %>%
+      self$fc9() %>% 
+      nnf_relu() %>%
+      self$fc10()
   }
 )
+
 model <- net()
 ```
 
@@ -1236,8 +1294,7 @@ model <- net()
 ```{r}
 optimizer <- optim_adam(model$parameters)
 
-for (epoch in 1:10) {
-  
+for (epoch in 1:500) {
   l <- c()
   
   for (b in enumerate(dl_train)) {
@@ -1248,12 +1305,9 @@ for (epoch in 1:10) {
     optimizer$step()
     l <- c(l, loss$item())
   }
-  
   cat(sprintf("Loss at epoch %d: %3f\n", epoch, mean(l)))
 }
-
 model$eval()
-
 
 test_losses <- c()
 
@@ -1262,7 +1316,6 @@ for (b in enumerate(dl_test)) {
   loss <- nnf_binary_cross_entropy_with_logits(output, b[[2]])
   test_losses <- c(test_losses, loss$item())
 }
-
 mean(test_losses)
 ```
 
@@ -1272,7 +1325,6 @@ mean(test_losses)
 out_log_odds = c()
 
 for (b in enumerate(dl_test)) {
-  
   # get log odds
   output <- model(b[[1]])
   
@@ -1284,7 +1336,6 @@ for (b in enumerate(dl_test)) {
 
 head(out_log_odds)
 head(prob);summary(prob)
-
 ```
 
 ## initial class prediction from log odds
