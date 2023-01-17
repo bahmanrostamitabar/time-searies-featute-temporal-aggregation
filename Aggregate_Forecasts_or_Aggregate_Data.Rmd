@@ -33,7 +33,7 @@ library(ggplot2)
 library(torch)
 library(randomForest)
 library(plotmo)
-library("iml")
+library(iml)
 library(gbm)
 library(e1071)
 library(ROCR)
@@ -454,7 +454,7 @@ plot(cutoff,AUC,type="l")
 ```
 
 ```{r}
-i <- cutoff[which.max(AUC)]
+i <- cutoff[which.min(Misclas)]
 knn.pred=knn(Xlag[train,],Xlag[-train,],ClassTable[train,"marks"],k=i)
 t <- table(knn.pred,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
@@ -914,27 +914,36 @@ dev.off()
 ```
 
 # 6.Boosting
+
+# Ispitati dal radi ovaj boosting na 01 ili na Ta DIrect
 ```{r}
 # require(gbm)
-train.data[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
-test.data[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
+# train.data[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
+# test.data[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
+train.data01 <- train.data
+test.data01 <- test.data
 
+train.data01[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
+test.data01[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
 #Varijabla o kojoj se klasifikuje (marks) mora biti numeric 0 ili 1, ne faktor nikako!
 ```
 
 # 6.1 Tree interaction depth=?
 ```{r}
-test.err=double(10)
-for(n.depth in 1:10){
-  fit.boost=gbm(marks~.,data=train.data, distribution="bernoulli",n.trees=1000,shrinkage=0.01,interaction.depth=n.depth) #Distribution je bernuli jer je u pitanju klasifikacija
-  
-  pred=predict(fit.boost,test.data,n.trees=1000,type="response")#ovdje treba response type jer ti daje onda brojeve oko 0 ili 1, bernulijevu raspodjelu, pa ti onda kasnije stavis >0.5
-  #Realno trabao bi da daje vrijednosti oko 0 ili 1, ali mislim da postoje ovo teska klasifikacija onda daje i vjerovatnoce između pa ih ti trebas onda soritirati!
-  
+source("R_sesions/cutoff_bost.R")
 
-  pred<-ifelse(pred>=0.6,1,0)
-  test.err[n.depth]=classificationMetrics(pred,test.data[,"marks"])[c("err")]*100
-  cat(n.depth," ")
+test.err=double(17)
+for(n.depth in 1:17){
+  fit.boost=gbm(marks~.,data=train.data01, distribution="bernoulli",n.trees=1000,shrinkage=0.01,interaction.depth=n.depth) #Distribution je bernuli jer je u pitanju klasifikacija
+  
+  pred=predict(fit.boost,test.data01,n.trees=1000,type="response")#ovdje treba response type jer ti daje onda brojeve oko 0 ili 1, bernulijevu raspodjelu, pa ti onda kasnije stavis >0.5
+  # Realno trabao bi da daje vrijednosti oko 0 ili 1, ali mislim da postoje ovo teska klasifikacija onda daje i vjerovatnoce između pa ih ti trebas onda soritirati!
+  cut <- cutoff_bost(pred)
+   
+  pred<-ifelse(pred>=cut,1,0)
+  test.err[n.depth]=classificationMetrics(pred,test.data01[,"marks"])[c("err")]*100
+  cat(n.depth, test.err[n.depth]," ")
+
 }
 plot(1:n.depth,test.err,type="b",col="blue")
 #From the graph, n.depth=10 i dalje pada trabas napraviti da se vidi do npr 20
@@ -946,10 +955,10 @@ range=seq(from=0.00001, to=0.2, by=0.01)
 miss_class.err=double(length(range))
 for(shrinkage in range){
   i=i+1
-  fit.boost=gbm(marks~.,data=train.data,distribution="bernoulli",n.trees=1100,shrinkage=shrinkage,interaction.depth=5)
-  pred=predict(fit.boost,test.data,n.trees=1000,type="response");
+  fit.boost=gbm(marks~.,data=train.data01,distribution="bernoulli",n.trees=1100,shrinkage=shrinkage,interaction.depth=5)
+  pred=predict(fit.boost,test.data01,n.trees=1000,type="response");
   pred<-ifelse(pred>=0.6,1,0)
-  miss_class.err[i]=classificationMetrics(pred,test.data[,"marks"])[c("err")]*100
+  miss_class.err[i]=classificationMetrics(pred,test.data01[,"marks"])[c("err")]*100
   cat(n.depth," ")
 }
 plot(range,miss_class.err,type="b",col="red")
@@ -963,13 +972,15 @@ n.trees=seq(from=100,to=5000,by=200)
 berr<-double(length(n.trees))
 while(i<=length(n.trees)){
 i=i+1
-fit.boost=gbm(marks~.,data=train.data,distribution="bernoulli",n.trees=1100,shrinkage=0.01,interaction.depth=5)
+fit.boost=gbm(marks~.,data=train.data01,distribution="bernoulli",n.trees=n.trees[i],shrinkage=0.01,interaction.depth=10)
 
-predmat=predict(fit.boost,newdata=test.data,n.trees=n.trees,type="response")
+predmat=predict(fit.boost,newdata=test.data01,n.trees=n.trees[i],type="response")
 
-predmat[,i]<-ifelse(predmat[,i]>=0.6,1,0)
-berr[i]=(classificationMetrics(predmat[,i],test.data[,"marks"]))[c("err")]*100
-cat(i," ")
+cut <- cutoff_bost(predmat)
+
+pred.boost<-ifelse(predmat>=cut,1,0)
+berr[i]=(classificationMetrics(pred.boost,test.data01[,"marks"]))[c("err")]*100
+cat(i,berr[i]," ")
 if (i==length(n.trees)) break;
 }
 plot(n.trees,berr,type="b",pch=19,ylab="Missclasification error", xlab="# Trees",main="Boosting Test Error",col="blue")
@@ -984,11 +995,13 @@ points(n.trees[min(which(berr==min(berr)))],min(berr),col="red",pch=20)
 
 # Best boosting tree
 ```{r}
-fit.best=gbm(marks~.,data=train.data,distribution="bernoulli",n.trees=1100,shrinkage=0.01,interaction.depth=5)
+#fit.best=gbm(marks~.,data=train.data01,distribution="bernoulli",n.trees=1100,shrinkage=0.01,interaction.depth=5)
+#Mada je razlika bukvalno milimetarska kod ovog acc bude 0.634, a donjeg 0.636, ali zbog grafika iznda stavio sam kao donji...mada se prvi brže fituje.
+fit.best=gbm(marks~.,data=train.data01,distribution="bernoulli",n.trees=4500,shrinkage=0.01,interaction.depth=10)
 effect <- summary(fit.best)
 
 plot(fit.best,i="trend")
-predmat=predict(fit.best,newdata=test.data,n.trees=1100,type="response")
+predmat=predict(fit.best,newdata=test.data01,n.trees=1100,type="response")
 
 boost.probs <- predmat
 ```
@@ -1017,21 +1030,23 @@ ggplot(feat_imp_df, aes(x = reorder(feature, rel.inf),
 ```{r}
 #Shows the partial dependence of the log-odds of variable i to the dependent variable!
 library(ggplot2)
+library(gridExtra)
 grid.arrange(plot(fit.best,i=rownames(effect)[1]),plot(fit.best,i=rownames(effect)[2]),plot(fit.best,i=rownames(effect)[3]),plot(fit.best,i=rownames(effect)[4]),nrow=2)
 ```
 
 ```{r,results='hide'}
-cut <- cutoff(boost.probs)
+source("cutoff_nn.R")
+cut <- cutoff_nn(boost.probs)
 ```
 
 ```{r}
-boost.pred=ifelse(boost.probs>cut,1,0)
-boost.pred2=ifelse(boost.probs>cut,"TA","Direct")
+# boost.pred=ifelse(boost.probs>cut,1,0)
+boost.pred=ifelse(boost.probs>cut,"TA","Direct")
 roc.curve(test.data[,"marks"],boost.pred)
 ```
 
 ```{r Boosting evaluation}
-(Boostingeval <-c(classificationMetrics(test.data[,"marks"],boost.pred2,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],boost.pred2,FALSE)$auc,classificationMetrics(test.data[,"marks"],boost.pred2,posClass = "TA","totU",cbM)))
+(Boostingeval <-c(classificationMetrics(test.data[,"marks"],boost.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],boost.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],boost.pred,posClass = "TA","totU",cbM)))
 ```
 
 #SVM
@@ -1042,7 +1057,7 @@ roc.curve(test.data[,"marks"],boost.pred)
 
 
 ```{r,eval=FALSE}
-library(e1071)
+# library(e1071)
 tune.out=tune(e1071::svm,as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial", ranges=list(cost=c(0.001 , 0.01, 0.1, 1,5,10,100),gamma=c(0.5,1,2,3,4)))
 
 summary(tune.out)
@@ -1074,7 +1089,7 @@ fitted=attributes(predict(fit.svm,train.data, decision.values =TRUE))$decision.v
 ```
 
 # ROC na trening podacima
-```{r}
+```{r, eval=FALSE}
 # library(ROCR)
 rocplot =function (pred,truth,...){
   predob= prediction(pred,truth )
@@ -1087,24 +1102,24 @@ rocplot(fitted,as.factor(train.data[,"marks"]), main=" Training Data")
 
 # Na test podacima
 ```{r, results='hide'}
-fitted =attributes(predict(fit.svm,test.data, decision.values =T))$decision.values
+fitted = attributes(predict(fit.svm,test.data, decision.values =T))$decision.values
 rocplot(fitted,as.factor(test.data[,"marks"]), main ="Test Data")
 
 fit2=svm(as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial",cost=5,gama=1, decision.values = T)
 
 fitted2=attributes(predict(fit2,test.data,decision.values =T))$decision.values#fitted je od 0 do 1
 
-cut <- cutoff(as.vector(fitted2))
+cut <- cutoff_nn(as.vector(fitted2))
 svm.pred <- ifelse(fitted2>cut,"TA","Direct")
 
-roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred))
+#roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred))
 
-svm.pred2 <- ifelse(svm.pred=="TA",1,0)#jer ovaj grafik ispod prihvata smo 0 i 1 varijable.
-rocplot(svm.pred2,as.factor(test.data[,"marks"]), add=T,col ="red")#Dobije se isto
+#svm.pred2 <- ifelse(svm.pred=="TA",1,0)#jer ovaj grafik ispod prihvata smo 0 i 1 varijable.
+#rocplot(svm.pred2,as.factor(test.data[,"marks"]), add=T,col ="red")#Dobije se isto
 ```
 
 ```{r SVM evaluation}
-(SVMeval <- c(classificationMetrics(test.data[,"marks"],as.factor(svm.pred2),posClass = "1"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred2),FALSE)$auc,classificationMetrics(test.data[,"marks"],as.factor(svm.pred2),posClass = "1","totU",cbM)))
+(SVMeval <- c(classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred),FALSE)$auc,classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA","totU",cbM)))
 ```
 
 # Null classifier
@@ -1117,8 +1132,8 @@ nulll=rep("TA",dim(test.data)[1])
 # Feedforward neural network
 ```{r neural network}
 # library(nnet)
-train.data<-ClassTable[train,]
-test.data<-ClassTable[-train,]
+# train.data<-ClassTable[train,]
+# test.data<-ClassTable[-train,]
 ```
 
 # Chossing the best setup
@@ -1384,7 +1399,7 @@ lr.pred <- as.factor(lr.pred)
 lasso <- as.factor(lasso)
 GAM.pred <- as.factor(GAM.pred)
 #rf.pred
-boost.pred2 <- as.factor(boost.pred2)
+boost.pred <- as.factor(boost.pred)
 svm.pred <- as.factor(svm.pred)
 
   class1 <- classificator(ideal_matrix,lr.pred,Ideal = TRUE)
@@ -1394,7 +1409,7 @@ svm.pred <- as.factor(svm.pred)
   class5 <- classificator(ideal_matrix,lasso,Ideal = TRUE)
   class6 <- classificator(ideal_matrix,GAM.pred,Ideal = TRUE)
   class7 <- classificator(ideal_matrix,rf.pred,Ideal = TRUE)
-  class8 <- classificator(ideal_matrix,boost.pred2,Ideal = TRUE)
+  class8 <- classificator(ideal_matrix,boost.pred,Ideal = TRUE)
   class9 <- classificator(ideal_matrix,svm.pred,Ideal = TRUE)
   class10 <- classificator(ideal_matrix,nulll,Ideal = TRUE)
   class11 <- classificator(ideal_matrix,nn.pred,Ideal = TRUE)
@@ -1454,8 +1469,11 @@ pairs(ClassTable[,c(impvar[1:9],"marks")],labels = c(impvar[1:9],"AD & AF"), col
 dev.off()
 ```
 
-
 ```{r}
 time_1<-Sys.time()
 time_1-time_0
 ```
+
+TO DO:
+
+* 

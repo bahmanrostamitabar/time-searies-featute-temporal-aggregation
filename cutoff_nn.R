@@ -1,7 +1,7 @@
 
 cutoff_nn <- function(lr.probs){
   #browser()
-  #5
+
   cutoff<-seq(from=quantile(lr.probs)[1],to=quantile(lr.probs)[4],by=0.01)
   #cutoff<-seq(from=0.5,to=0.7,by=0.01)
   
