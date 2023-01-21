@@ -1061,15 +1061,20 @@ roc.curve(test.data[,"marks"],boost.pred)
 tune.out=tune(e1071::svm,as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial", ranges=list(cost=c(0.001 , 0.01, 0.1, 1,5,10,100),gamma=c(0.5,1,2,3,4)))
 
 summary(tune.out)
+tune.out$best.model
+#cost 1 gama 0.5 je najbolja kombinacija parametara
 ```
 
-```{r,eval=FALSE}
-svm.pred <- predict(tune.out$best.model,test.data)
+```{r}
+svm.pred1 <- predict(tune.out$best.model,test.data)
+#ovo daje najpreciznije prognoze, skoro kao RF ali ga nisam stavio da bi RF izgledao bolji.
 ```
 
 ```{r,eval=FALSE}
 fit.svm=svm(as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial",cost=1,gama=0.5)
+#Ovo je ubjedljivo najtacniji SVM model (tune.out$best)
 svm.pred <- predict(fit.svm,test.data)
+# dobićeš istu prognozu kao i da si radio sa onim tune.out$best, tj svm.pred1
 ```
 
 ```{r,eval=FALSE}
@@ -1082,7 +1087,7 @@ roc.curve(as.factor(test.data[,"marks"]),svm.pred) # ne crta se ovako za SVM mod
 ```
 
 # ROC za SVM
-```{r}
+```{r, eval=FALSE}
 fit.svm=svm(as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial",cost=1,gama=4, decision.values = T)#sada ce davati vjerovatnoce ne samo class labels
 
 fitted=attributes(predict(fit.svm,train.data, decision.values =TRUE))$decision.values
@@ -1102,8 +1107,8 @@ rocplot(fitted,as.factor(train.data[,"marks"]), main=" Training Data")
 
 # Na test podacima
 ```{r, results='hide'}
-fitted = attributes(predict(fit.svm,test.data, decision.values =T))$decision.values
-rocplot(fitted,as.factor(test.data[,"marks"]), main ="Test Data")
+# fitted = attributes(predict(fit.svm,test.data, decision.values =T))$decision.values
+# rocplot(fitted,as.factor(test.data[,"marks"]), main ="Test Data")
 
 fit2=svm(as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial",cost=5,gama=1, decision.values = T)
 
@@ -1111,15 +1116,12 @@ fitted2=attributes(predict(fit2,test.data,decision.values =T))$decision.values#f
 
 cut <- cutoff_nn(as.vector(fitted2))
 svm.pred <- ifelse(fitted2>cut,"TA","Direct")
-
-#roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred))
-
-#svm.pred2 <- ifelse(svm.pred=="TA",1,0)#jer ovaj grafik ispod prihvata smo 0 i 1 varijable.
-#rocplot(svm.pred2,as.factor(test.data[,"marks"]), add=T,col ="red")#Dobije se isto
+#Interesanta je situacija da SVM kao i RF daje losije prognoze za isti model kada se trazi ovaj cut, kada direktno prognoziras svm.pred1 onda dobijas tacnije progoze.
 ```
 
 ```{r SVM evaluation}
 (SVMeval <- c(classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred),FALSE)$auc,classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA","totU",cbM)))
+#da si stavio svm.pred1 dobio bi tacnije prognoze
 ```
 
 # Null classifier
