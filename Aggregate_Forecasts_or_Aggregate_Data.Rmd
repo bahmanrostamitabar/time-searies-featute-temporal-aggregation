@@ -1120,8 +1120,9 @@ svm.pred <- ifelse(fitted2>cut,"TA","Direct")
 ```
 
 ```{r SVM evaluation}
+# da si stavio svm.pred1 dobio bi tacnije prognoze skoro kao rf.
+# svm.pred <- svm.pred1
 (SVMeval <- c(classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred),FALSE)$auc,classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA","totU",cbM)))
-#da si stavio svm.pred1 dobio bi tacnije prognoze
 ```
 
 # Null classifier
