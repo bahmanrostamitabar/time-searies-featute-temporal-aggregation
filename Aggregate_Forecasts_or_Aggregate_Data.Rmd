@@ -38,6 +38,7 @@ library(gbm)
 library(e1071)
 library(ROCR)
 library(nnet)
+library(xgboost)
 #devtools::install_github("DejanMircetic/ExtendedAccuracy")#Draft version of package in progress
 ```
 
@@ -1381,8 +1382,78 @@ t.pred <- as.factor(t.pred)
 (Teval <- c(classificationMetrics(test.data[,"marks"],t.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],t.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],t.pred,posClass = "TA","totU",cbM)))
 ```
 
-#Add that Xg Boost algoritam!!!
-###
+# Xg Boost algorithm
+```{r}
+train.data01 <- train.data
+test.data01 <- test.data
+
+train.data01[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
+test.data01[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
+
+X_train = data.matrix(train.data01[,-43])                  # independent variables for train
+y_train = train.data01[,43]                                # dependent variables for train
+
+X_test = data.matrix(test.data01[,-43])                    # independent variables for test
+y_test = test.data01[,43]    
+
+xgboost_train = xgb.DMatrix(data=X_train, label=y_train)
+xgboost_test = xgb.DMatrix(data=X_test, label=y_test)
+```
+
+# Best setup for XGBoost
+```{r, eval=TRUE}
+test.xg.err=double(10)
+AUC.xg.err=double(10)
+f.xg.err=double(10)
+for(depth in 1:30){
+  fit=xgboost(data = xgboost_train, max.depth=depth,nrounds=500,objective = "binary:logistic")
+  pred_test = predict(fit, xgboost_test)
+  cut_xg <- cutoff_nn(pred_test)
+  xg.pred=ifelse(pred_test>cut_xg,"TA","Direct")
+  test.xg.err[depth]=(classificationMetrics(xg.pred,test.data[,"marks"])["err"]*100)
+  AUC.xg.err[depth]=roc.curve(as.factor(test.data[,"marks"]),as.factor(xg.pred),FALSE)$auc
+  f.xg.err[depth]=(classificationMetrics(xg.pred,test.data[,"marks"])["F"])
+  cat(depth," ")
+}
+matplot(1:depth,test.xg.err,pch=19,col=c("red"),type="b",ylab="Misclassification Error")
+legend("topright",legend=c("Test"),pch=19,col=c("red"))#From the graph size=2
+
+
+matplot(1:depth,AUC.xg.err,pch=19,col=c("red"),type="b",ylab="AUC")
+legend("topright",legend=c("AUC"),pch=19,col=c("red"))#From the graph size=10
+
+matplot(1:depth,f.xg.err,pch=19,col=c("red"),type="b",ylab="F Error")
+legend("topright",legend=c("F"),pch=19,col=c("red"))#From the graph size=10
+
+# The optimal setup is 23 variables
+
+which.min(test.xg.err) #23 variables
+
+```
+
+# Best XG model
+```{r}
+xg <- xgboost(data = xgboost_train, max.depth=23,nrounds=500,objective = "binary:logistic")
+
+summary(xg)
+
+pred_test = predict(xg, xgboost_test)
+
+cut_xg <- cutoff_nn(pred_test)
+
+i<-cut_xg
+xg.pred=ifelse(pred_test>i,"TA","Direct")
+t<-table(xg.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+1-mean(xg.pred==ClassTable[-train,"marks"])
+```
+
+# XG Boost eval
+```{r xgeval}
+xg.pred <- as.factor(xg.pred)
+(XGeval <- c(classificationMetrics(test.data[,"marks"],xg.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],xg.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],xg.pred,posClass = "TA","totU",cbM)))
+```
 
 
 # Evaluation table
@@ -1417,9 +1488,10 @@ svm.pred <- as.factor(svm.pred)
   class10 <- classificator(ideal_matrix,nulll,Ideal = TRUE)
   class11 <- classificator(ideal_matrix,nn.pred,Ideal = TRUE)
   class12 <- classificator(ideal_matrix,t.pred,Ideal = TRUE)
+  class13 <- classificator(ideal_matrix,xg.pred,Ideal = TRUE)
   
-  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4],class12[,4])
-  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "FNN", "DL_Torch")
+  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4],class12[,4],class13[,4])
+  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "FNN", "DL_Torch","XG Boost")
   nemenyi(as.matrix(table_all),plottype="vmcb")
 
   #without ideal classificator
@@ -1430,7 +1502,7 @@ svm.pred <- as.factor(svm.pred)
 ```{r}
 png("Fig_MCB_all.png",  width = 300, height = 150, units = 'mm', res = 300)
 
-colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch")
+colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch","XG Boost")
   
   #without ideal and null classifications
   nemenyi(as.matrix(table_all[,-c(3,13)]),plottype="vmcb")
@@ -1454,9 +1526,10 @@ boost_CB <- sum(table(boost.pred2,ClassTable[-train,"marks"])*cbM)
 svm_CB <- sum(table(svm.pred,ClassTable[-train,"marks"])*cbM)
 nn_CB <- sum(table(nn.pred,ClassTable[-train,"marks"])*cbM)
 nn_DL <- sum(table(t.pred,ClassTable[-train,"marks"])*cbM)
+xg_boost <- sum(table(xg.pred,ClassTable[-train,"marks"])*cbM)
 
-table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB,nn_DL))
-colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","FNN","DL Torch")
+table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB,nn_DL,xg_boost))
+colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","FNN","DL Torch","XG Boost")
 rownames(table_CB) <- c("Overall RMSSE")
 
 #export table
