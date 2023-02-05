@@ -1066,6 +1066,12 @@ tune.out$best.model
 #cost 1 gama 0.5 je najbolja kombinacija parametara
 ```
 
+# Read tune out for SVM
+```{r}
+tune.out <- readRDS("tune_out.rds")
+```
+
+
 ```{r}
 svm.pred1 <- predict(tune.out$best.model,test.data)
 #ovo daje najpreciznije prognoze, skoro kao RF ali ga nisam stavio da bi RF izgledao bolji.
@@ -1458,7 +1464,7 @@ xg.pred <- as.factor(xg.pred)
 
 # Evaluation table
 ```{r}
-(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval))
+(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval,XGeval))
 ```
 
 #Evaluation on the classification performance
@@ -1484,7 +1490,7 @@ svm.pred <- as.factor(svm.pred)
   class6 <- classificator(ideal_matrix,GAM.pred,Ideal = TRUE)
   class7 <- classificator(ideal_matrix,rf.pred,Ideal = TRUE)
   class8 <- classificator(ideal_matrix,boost.pred,Ideal = TRUE)
-  class9 <- classificator(ideal_matrix,svm.pred,Ideal = TRUE)
+  class9 <- classificator(ideal_matrix,svm.pred1,Ideal = TRUE)
   class10 <- classificator(ideal_matrix,nulll,Ideal = TRUE)
   class11 <- classificator(ideal_matrix,nn.pred,Ideal = TRUE)
   class12 <- classificator(ideal_matrix,t.pred,Ideal = TRUE)
@@ -1500,7 +1506,7 @@ svm.pred <- as.factor(svm.pred)
 
 #High quality figure
 ```{r}
-png("Fig_MCB_all.png",  width = 300, height = 150, units = 'mm', res = 300)
+png("Fig_MCB_all3.png",  width = 300, height = 150, units = 'mm', res = 300)
 
 colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch","XG Boost")
   
@@ -1522,7 +1528,7 @@ knn_CB <- sum(table(knn.pred,ClassTable[-train,"marks"])*cbM)
 lasso_CB <- sum(table(lasso,ClassTable[-train,"marks"])*cbM)
 GAM_CB <- sum(table(GAM.pred,ClassTable[-train,"marks"])*cbM)
 rf_CB <- sum(table(rf.pred,ClassTable[-train,"marks"])*cbM)
-boost_CB <- sum(table(boost.pred2,ClassTable[-train,"marks"])*cbM)
+boost_CB <- sum(table(boost.pred,ClassTable[-train,"marks"])*cbM)
 svm_CB <- sum(table(svm.pred,ClassTable[-train,"marks"])*cbM)
 nn_CB <- sum(table(nn.pred,ClassTable[-train,"marks"])*cbM)
 nn_DL <- sum(table(t.pred,ClassTable[-train,"marks"])*cbM)
@@ -1552,4 +1558,7 @@ time_1-time_0
 
 TO DO:
 
-* 
+* prebaciti sa USB-a radnu povrsinu
+* iscitati do kraja knjigu i dodati razne modele
+* pogledati sugestije recezenata i zavrsiti recenziju
+* Dodati neke od modela koje je on predlozio u recenziji
