@@ -39,6 +39,8 @@ library(e1071)
 library(ROCR)
 library(nnet)
 library(xgboost)
+#library(httr)
+#set_config(use_proxy("proxy.uns.ac.rs",8080))
 #devtools::install_github("DejanMircetic/ExtendedAccuracy")#Draft version of package in progress
 ```
 
@@ -1128,7 +1130,7 @@ svm.pred <- ifelse(fitted2>cut,"TA","Direct")
 
 ```{r SVM evaluation}
 # da si stavio svm.pred1 dobio bi tacnije prognoze skoro kao rf.
-# svm.pred <- svm.pred1
+svm.pred <- svm.pred1
 (SVMeval <- c(classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(svm.pred),FALSE)$auc,classificationMetrics(test.data[,"marks"],as.factor(svm.pred),posClass = "TA","totU",cbM)))
 ```
 
@@ -1407,7 +1409,7 @@ xgboost_test = xgb.DMatrix(data=X_test, label=y_test)
 ```
 
 # Best setup for XGBoost
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 test.xg.err=double(10)
 AUC.xg.err=double(10)
 f.xg.err=double(10)
