@@ -1593,6 +1593,56 @@ predRNN <- as.factor(predRNN)
 (RNNeval <- c(classificationMetrics(test.data[,"marks"],predRNN,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],predRNN,FALSE)$auc,classificationMetrics(test.data[,"marks"],predRNN,posClass = "TA","totU",cbM)))
 ```
 
+# Convolution Neural Networks
+
+```{r}
+model <- keras_model_sequential()
+model %>%
+  layer_conv_1d(filters = 32, kernel_size = 3, activation = "relu", input_shape = c(42, 1)) %>%
+  layer_max_pooling_1d(pool_size = 2) %>%
+  layer_dropout(rate = 0.2) %>%
+  layer_flatten() %>%
+  layer_dense(units = 1, activation = "sigmoid")
+
+# Compile the model
+model %>% compile(
+  loss = "binary_crossentropy",
+  optimizer = optimizer_adam(),
+  metrics = c("accuracy")
+)
+
+# Train the model
+history <- model %>% fit(
+  x_train, y_train,
+  epochs = 50,
+  batch_size = 32,
+  validation_data = list(x_test, y_test)
+)
+
+# Evaluate the model on the testing set
+scores <- model %>% evaluate(x_test, y_test, verbose = 0)
+cat("Accuracy: ", scores[2], "\n")
+
+# Plot the training history
+plot(history)
+
+predCNN <- predict(model, X_test)
+
+cut_nn <- cutoff_nn(predCNN)
+
+i<-cut_nn
+predCNN=ifelse(predCNN>i,"TA","Direct")
+t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+1-mean(t.pred==ClassTable[-train,"marks"])
+
+predCNN <- as.factor(predCNN)
+(CNNeval <- c(classificationMetrics(test.data[,"marks"],predCNN,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],predCNN,FALSE)$auc,classificationMetrics(test.data[,"marks"],predCNN,posClass = "TA","totU",cbM)))
+
+
+```
+
 
 
 # Evaluation table
