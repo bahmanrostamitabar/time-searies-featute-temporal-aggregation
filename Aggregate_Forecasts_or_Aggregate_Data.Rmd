@@ -1398,13 +1398,13 @@ test.data01 <- test.data
 train.data01[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
 test.data01[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
 
-X_train = data.matrix(train.data01[,-43])                  # independent variables for train
+x_train = data.matrix(train.data01[,-43])                  # independent variables for train
 y_train = train.data01[,43]                                # dependent variables for train
 
 X_test = data.matrix(test.data01[,-43])                    # independent variables for test
 y_test = test.data01[,43]    
 
-xgboost_train = xgb.DMatrix(data=X_train, label=y_train)
+xgboost_train = xgb.DMatrix(data=x_train, label=y_train)
 xgboost_test = xgb.DMatrix(data=X_test, label=y_test)
 ```
 
@@ -1463,10 +1463,141 @@ xg.pred <- as.factor(xg.pred)
 (XGeval <- c(classificationMetrics(test.data[,"marks"],xg.pred,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],xg.pred,FALSE)$auc,classificationMetrics(test.data[,"marks"],xg.pred,posClass = "TA","totU",cbM)))
 ```
 
+# TensorFlow
+
+```{r}
+library(keras)
+# devtools::install_github("rstudio/tensorflow")
+library(tensorflow)
+
+# install_tensorflow()
+#https://github.com/rstudio/keras/issues/1311
+# Ili pogledaj iz ISLR2 knjige
+
+model <- keras_model_sequential() %>% 
+  layer_dense(units = 80, activation = "relu", input_shape = c(42)) %>%
+  layer_dropout(rate = 0.6) %>%
+  layer_dense(units = 40, activation = "relu") %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 5, activation = "relu") %>% 
+  layer_dense(units = 1, activation = "sigmoid")
+
+val_indices <- 1:5000
+x_val <- x_train[val_indices,]
+partial_x_train <- x_train[-val_indices,]
+ 
+y_val <- y_train[val_indices]
+partial_y_train <- y_train[-val_indices]
+
+model %>% compile(
+  optimizer = "rmsprop",
+  loss = "binary_crossentropy",
+  metrics = c("accuracy")
+)
+
+history <- model %>% fit(
+   partial_x_train,
+   partial_y_train,
+   epochs=30,
+ # batch_size=5000,
+   validation_data = list(x_val, y_val)
+ )
+
+history$params
+str(history)
+history$metrics$accuracy
+
+plot(history , smooth = FALSE)
+which.max(history$metrics$val_accuracy)
+
+model %>% fit(
+  x_train,
+  y_train,
+  epochs=which.max(history$metrics$val_accuracy),
+  #batch_size=1000
+)  
+
+results <- model %>% evaluate(X_test, y_test)
+results
+
+predTF1 <- predict(model, X_test)
+# model %>% predict(X_test) 
+
+cut_nn <- cutoff_nn(predTF1)
+
+i<-cut_nn
+pred1=ifelse(predTF1>i,"TA","Direct")
+t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+1-mean(t.pred==ClassTable[-train,"marks"])
+
+predTF1 <- as.factor(predTF1)
+(TF1eval <- c(classificationMetrics(test.data[,"marks"],predTF1,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],predTF1,FALSE)$auc,classificationMetrics(test.data[,"marks"],predTF1,posClass = "TA","totU",cbM)))
+```
+
+# Recurrent neural network
+```{r}
+# RNN
+
+# Provjeri gore kod XG bosta da promjenis ovo sa velikim i malim x
+# x_train <- x_train
+# y_train 
+# x_test <- X_test
+# y_test
+
+# Define the model architecture
+model <- keras_model_sequential()
+model %>%
+  layer_lstm(units = 64, input_shape = c(42, 1)) %>%
+  layer_dropout(rate = 0.2) %>%
+  layer_dense(units = 1, activation = "sigmoid")
+
+# Compile the model
+model %>% compile(
+  loss = "binary_crossentropy",
+  optimizer = optimizer_adam(),
+  metrics = c("accuracy")
+)
+
+# Train the model
+history <- model %>% fit(
+  x_train, y_train,
+  epochs = 50,
+  batch_size = 32,
+  validation_data = list(x_test, y_test)
+)
+
+# Evaluate the model on the testing set
+scores <- model %>% evaluate(x_test, y_test, verbose = 0)
+cat("Accuracy: ", scores[2], "\n")
+
+# Plot the training history
+plot(history)
+
+predy <- predict(model, X_test) > 0.5
+mean(abs(y_test == as.numeric(predy)))
+
+predRNN <- predict(model, X_test)
+
+cut_nn <- cutoff_nn(predRNN)
+
+i<-cut_nn
+predRNN=ifelse(predRNN>i,"TA","Direct")
+t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+1-mean(t.pred==ClassTable[-train,"marks"])
+
+predRNN <- as.factor(predRNN)
+(RNNeval <- c(classificationMetrics(test.data[,"marks"],predRNN,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],predRNN,FALSE)$auc,classificationMetrics(test.data[,"marks"],predRNN,posClass = "TA","totU",cbM)))
+```
+
+
 
 # Evaluation table
 ```{r}
-(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval,XGeval))
+(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval,XGeval,TF1eval))
 ```
 
 #Evaluation on the classification performance
