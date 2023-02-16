@@ -55,7 +55,6 @@ source("R/forecasthorizont.R")
 
 ```{r Forecasting, eval=FALSE}
 source("R/foresee2.R")
-
 TA<-foresee2(Monthly_M4,2,h=24,model="TA")#Ako zelis h=60, onda #TA<-foresee2(Monthly_M4,h=60,200,model="TA")
 Direct<-foresee2(Monthly_M4,2,h=24,model="base")
 ```
@@ -86,18 +85,14 @@ Direct<- readRDS("h=24 steps/16.01.2020-Sa RMSSE/Direct.rds")
 #MAPE
 plot(colMeans(TA$Errors[,"MAPE",]), type = "b", ylab="MAPE")
 points(colMeans(Direct$Errors[,"MAPE",]),type = "b", col="red")
-
 #MASE
 plot(colMeans(TA$Errors[,"MASE",]), type = "b", ylab="MASE",ylim = c(1,1.7))
 points(colMeans(Direct$Errors[,"MASE",]), type = "b", col="red")
-
 #RMSSE
 plot(colMeans(TA$Errors[,"RMSSE",]), type = "b", ylab="RMSSE",ylim = c(0.95,1.4))
 points(colMeans(Direct$Errors[,"RMSSE",]), type = "b", col="red")
-
 boxplot(cbind(Direct$Errors[,params$criteria,1:6],TA$Errors[,params$criteria,1:6]),outline=FALSE,col=c(0,0,0,0,0,0,2,2,2,2,2,2))
 legend("topright", legend=c("Direct", "TA"),col=c("black","red"), lty=1, cex=0.8)
-
 ```
 #Box plots for each level
 ```{r}
@@ -116,7 +111,6 @@ level <- params$level #####"Monthly","2-Monthly","Quarterly","4-Monthly","Biannu
 ```
 
 ```{r Comparison}
-
 comparison <- function(criteria,level,TA,Direct){
   
   data<-cbind(TA$Errors[,criteria,level], Direct$Errors[,criteria,level])
@@ -125,7 +119,6 @@ comparison <- function(criteria,level,TA,Direct){
   data <- as.data.frame(data)
  
   BA <- rep(NA,dim(data)[1])
-
   for(i in 1:dim(data)[1]){
   
    ifelse(as.vector(data[i,1] < data[i,2]),BA[i] <- c("TA"),BA[i] <- c("Direct"))
@@ -143,19 +136,14 @@ summary(comp_data)
 ```{r}
 boxplot(comp_data[,1:2])
 points(colMeans(comp_data[,1:2]),col="red",pch=16)#prosjecna greska
-
 boxplot(comp_data[,1:2],outline = FALSE)
-
 #MCB test
 nemenyi(as.matrix(comp_data[,1:2]),plottype="vmcb")
 #Rezultati su takvi da izgleda da agregiranje prognoza je bolja strategija za sve nivoe pri h=12, 24 i 60.
-
 #png("Fig MCB.png",  width = 300, height = 100, units = 'mm', res = 300)
-
 #b <- (as.matrix(comp_data[,1:2]))
 #colnames(b) <- c("AF","AD")
 #nemenyi(b,plottype="vmcb")
-
 #dev.off()
 ```
 
@@ -178,7 +166,6 @@ colMeans(ideal_matrix)
 ```{r}
 a <- comp_data %>% filter(RMSSE=="Direct")
 b <- comp_data %>% filter(RMSSE=="TA")
-
 cbM <- matrix(c(colMeans(a[,1:2])[2],colMeans(a[,1:2])[1],colMeans(b[,1:2])[2],colMeans(b[,1:2])[1]),nrow = 2)
 rownames(cbM) <- c("Direct","TA")
 colnames(cbM) <- c("Direct_true","TA_true")
@@ -191,41 +178,33 @@ Srediti koje se osobine izdvajaju, uvesti moza koeficijent CV, uporediti rezulta
 
 # Add characteristics
 ```{r Importing the features-time series characteristics,eval=FALSE}
-
 #Srediti ovo ispod jer ne odgovara borju dimenzija kod fetures 2 tipa metrics[,18]...Ovo je stari kod za fetures
   
 features<-readRDS('features.rds')
 characteristics<-filter(features,frequency==12)
-
 ts.origin<-rep(NA,48000)
-
 for(i in (1:48000)){
   ts.origin[i]<-as.character(Monthly_M4[[i]]$type)
 }
-
 metrics<-cbind(ts.origin,data.frame(characteristics)); colnames(metrics)<-c("type",colnames(characteristics))
 metrics<-metrics[,-c(2,3,4)];
 metrics[,2:18]<-scale(metrics[,2:18])
 #boxplot(metrics)
 #str(metrics)
 #cor(metrics[,-1])#there is a lot of corelation, so petentional confounding
-
 ```
 
 # Features extended
 ```{r Features extended, eval=FALSE}
 ###More features, but it change the results little bit.
 Mdata <- Monthly_M4
-
 Mseries<-list(rep(NA,length(Mdata)))
 series_names<-c(rep(NA,length(Mdata)))
-
 for(k in(1:length(Mdata))){
   Mseries[[k]]<-Mdata[[k]]$x
   series_names[k]<-Mdata[[k]]$st
 }
 names(Mseries)<-series_names
-
 measurements <- bind_cols(
   tsfeatures(Mseries,
              c("acf_features","pacf_features","entropy","lumpiness",
@@ -236,7 +215,6 @@ measurements <- bind_cols(
              c("mean","var"), scale=FALSE, na.rm=TRUE),
   tsfeatures(Mseries,
              c("max_level_shift","max_var_shift"), trim=TRUE))
-
 features <- measurements %>%
  dplyr:: select("mean", "var","trend","seasonal_strength", "entropy", "lumpiness", "flat_spots", "crossing_points", 
          "nonlinearity", "stability", "hurst","spike", "linearity", "curvature","peak", "trough",
@@ -247,9 +225,7 @@ features <- measurements %>%
          "e_acf1", "e_acf10",  
          "max_level_shift", "time_level_shift", 
          "max_var_shift", "time_var_shift")
-
 # "max_kl_shift"  i    "time_kl_shift" Ova dva koeficijenta imaju NA vrijednosti a i nisu kasnije znacajni iybaiti ih
-
 metrics <- as.data.frame(scale(features))
 ###Preaty much the same regression is obtained
 ```
@@ -257,14 +233,10 @@ metrics <- as.data.frame(scale(features))
 #Load feature extende
 ```{r}
 features<- readRDS("features_extended.rds")
-
 CV <- sqrt(features$var)/features$mean#coefficient of variation
 features <- cbind(CV,features)
-
 origin<-rep(NA,48000)
-
 for(i in (1:48000)){origin[i]<-as.character(Monthly_M4[[i]]$type)}
-
 metrics <- as.data.frame(scale(features))
 metrics <- cbind(origin,metrics)
 ```
@@ -272,7 +244,6 @@ metrics <- cbind(origin,metrics)
 # Making classification data base
 ```{r Classification table}
 marks <- comp_data[,criteria]
-
 if(h==60){
   ClassTable<-cbind(metrics[1:47000,],marks)
 }else{
@@ -280,42 +251,31 @@ if(h==60){
 }
 #Razmisliti da li dodati ovo marks kao faktor odmah ili da ga odmah prebasic u o i 1 kodiranje gdje je nula TA da bi dobio tamo keficijente pogodne tj pozitivne
 #ClassTable[,"marks"] <- ifelse(ClassTable[,"marks"]=="TA",0,1)
-
 #Mozes i da vidis korelaciju izmedju varijabli i klase, jer ako pretvoris marks u numeric on ce to trenitari kao brojeve 1 i 2 dace ti krelaciju i vidi se da je slaba, tj. da nema puno signala izmedju uzroka i posljedica. 
 #a <- ClassTable
 #a$marks <- as.numeric(a$marks)
 #cor(a[,2:19])
-
 attach(ClassTable)
-
 set.seed(1)# Igraj se sa ovim set seed za vrijednost 5 daje peak da je znacajan a ne entropija.
 train=sample(1:48000,48000*0.7)
-
 train.data<-ClassTable[train,]
 test.data<-ClassTable[-train,]
 ```
 
 # Logistic regression
 ```{r Logistic regression}
-
 #Najbolji model sa starim featuresima
 #lr<-glm(marks~.-x_acf10-x_acf1-seas_acf1-e_acf1-e_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10,family = binomial, data=train.data);summary(lr);vif(lr)
-
 lr<-glm(marks~.,family = binomial, data=train.data);summary(lr);vif(lr)
-
 #High leverage points
 plot(hatvalues(lr))
-
 #Model se na kraju svodi na ovaj pojednostavljeni sa samo statisticki znacajnim promjenjivim
 #lr<-glm(marks~.-peak-trough-spike-x_acf10-x_acf1-seas_acf1-e_acf1-e_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10,family = binomial, data=train.data);summary(lr);vif(lr)
-
 #Ovo ovdje je sa type varijablom
 #lr<-glm(marks~.-peak-trough-spike-x_acf10-x_acf1-seas_acf1-e_acf1-e_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10,family = binomial, data=train.data[,]);summary(lr);vif(lr)
 #contrasts(train.data$type)
-
 #Polinomna regresija
 #lr<-glm(marks~.+poly(trend,3)+poly(seas_acf1,3)-e_acf1-e_acf10-x_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10,family = binomial, data=train.data[,-1]);summary(lr)
-
 lr.probs=predict(lr,type="response",newdata=ClassTable[-train,])
 #contrasts(ClassTable[,"marks"])
 ```
@@ -348,7 +308,6 @@ Nulti klasifikator bi bio `r summary(ClassTable[,19])` i `r 30369/48000` za TA i
 
 ```{r LR evaluation}
 (LReval <- c(classificationMetrics(ClassTable[-train,"marks"],lr.pred,posClass = "TA"),AUC=roc.curve(ClassTable[-train,"marks"],lr.pred,FALSE)$auc,classificationMetrics(ClassTable[-train,"marks"],lr.pred,posClass = "TA","totU",cbM)))
-
 ```
 
 # Test ROC curve
@@ -359,16 +318,11 @@ roc.curve(ClassTable[-train,"marks"],lr.pred)
 # LDA
 ```{r LDA}
 require(MASS)
-
 lda.fit<-lda(marks~., data=train.data);summary(lda.fit)
-
 lda.fit
 plot(lda.fit)
-
 lda.pred=predict(lda.fit,test.data)
-
 data.frame(lda.pred)[1:5,]#da vidis po svakoj grupi i diskriminantni skor
-
 t<-table(lda.pred$class,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
 (t[2,1]/(t[1,1]+t[2,1]))#FP
@@ -384,11 +338,8 @@ roc.curve(ClassTable[-train,"marks"],lda.pred$class)
 # QDA
 ```{r QDA}
 qda.fit<-qda(marks~., data=train.data);summary(qda.fit)
-
 qda.fit
-
 lqda.pred=predict(qda.fit,test.data)
-
 t<-table(lqda.pred$class,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
 (t[2,1]/(t[1,1]+t[2,1]))#FP
@@ -404,14 +355,12 @@ roc.curve(ClassTable[-train,"marks"],lqda.pred$class)
 ```{r KNN}
 library(class)
 Xlag=as.matrix(ClassTable[,!(colnames(ClassTable)==c("origin") | colnames(ClassTable)==c("marks"))])
-
 knn.pred=knn(Xlag[train,],Xlag[-train,],ClassTable[train,"marks"],k=9)
 t <- table(knn.pred,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
 (t[2,1]/(t[1,1]+t[2,1]))#FP
 mean(knn.pred==ClassTable[-train,"marks"])
 roc.curve(ClassTable[-train,"marks"],knn.pred)
-
 #Napomena knn isto moze generisati vjerovatnoce sa prob = TRUE ali nesto nisu pouzdane i logicne
 #knn.pred2=knn(Xlag[train,],Xlag[-train,],ClassTable[train,19],k=9,prob = TRUE)
 #a <- attributes(knn.pred2);hist(a$prob)
@@ -420,14 +369,11 @@ roc.curve(ClassTable[-train,"marks"],knn.pred)
 # Choosing the number of k neighbors
 ```{r Optimal k}
 #Procitati o KNN-CV sa 200 strane, slicno je ovome ali mislim da je bolje
-
 cutoff<-seq(from=1,to=5,by=1)
-
 Misclas<-rep(NA,length(cutoff))
 FN<-rep(NA,length(cutoff))
 FP<-rep(NA,length(cutoff))
 AUC<-rep(NA,length(cutoff))
-
 j=1
 for(i in cutoff){
   knn.pred=knn(Xlag[train,],Xlag[-train,],ClassTable[train,"marks"],k=i)
@@ -463,7 +409,6 @@ t <- table(knn.pred,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
 (t[2,1]/(t[1,1]+t[2,1]))#FP
 mean(knn.pred==ClassTable[-train,"marks"])
-
 roc.curve(ClassTable[-train,"marks"],knn.pred)
 ```
 
@@ -473,7 +418,6 @@ roc.curve(ClassTable[-train,"marks"],knn.pred)
 # Best subsection on whole data set
 ```{r Best subset, eval=FALSE}
 library(bestglm)#strana 18 u bestglm pdf dokumentu
-
 bestglm(ClassTable[,c(-1,-7,-10,-12,-14)], IC="BICq", t=1, family=binomial)
 #Ali nisu svi koeficijenti statisticki znacajni. Ne razlikuje se puno ovaj model od onog koje odabere Lasso.
 #Ovaj princip radi samo do 15 varijabli.
@@ -489,7 +433,6 @@ names(reg.summary)
 plot(reg.summary$bic,xlab="Number of Variables",ylab="BIC")
 (m <- which.min(reg.summary$bic))
 points(m,reg.summary$bic[m],pch=20,col="red")
-
 plot(regfit.full,scale="bic")
 coef(regfit.full,m)
 ```
@@ -499,7 +442,6 @@ coef(regfit.full,m)
 library(glmnet)
 x=model.matrix(marks~.,data=ClassTable) 
 y=(ClassTable$marks)
-
 fit.lasso=glmnet(x,y,family="binomial")
 plot(fit.lasso,xvar="lambda",label=TRUE)
 plot(fit.lasso,xvar="dev",label=TRUE)
@@ -507,7 +449,6 @@ plot(fit.lasso,xvar="dev",label=TRUE)
 cv.lasso=cv.glmnet(x,y,family="binomial",type.measure="auc")
 plot(cv.lasso)
 coef(cv.lasso)
-
 #Ako hoces da predvidjas sa ovim modelom, kod je ispod.
 lasso <- predict(cv.lasso,x[-train,],type = "response")
 lasso <- ifelse(lasso>0.63, "TA","Direct")
@@ -525,28 +466,22 @@ Glupo je mozes sve direktno preko Lasso cros validacije da zavrsis.
 ```{r,eval=FALSE}
 lasso.tr=glmnet(x[train,],y[train],family="binomial")
 pred=predict(lasso.tr,x[-train,],type = "response")
-
 lasso.pred <- matrix(rep(NA,dim(pred)[1]*dim(pred)[2]),ncol = dim(pred)[2])
 for(i in 1:dim(pred)[2]){
   lasso.pred[,i]=ifelse(pred[,i]>0.5,"TA","Direct")#Mozes ovdje pokusati sa drugim pragom
 }
-
 auc <- rep(NA,dim(lasso.pred)[2])
 for(i in 1:dim(lasso.pred)[2]){
   auc[i] <- (roc.curve(y[-train],lasso.pred[,i],FALSE))$auc  
 }
-
 plot(log(lasso.tr$lambda),auc,type="b",xlab="Log(lambda)")
 #Sa lijeve strane su least square fit, dok je sa desne samo intercept, to vidis po ovome
 lasso.tr$lambda
 log(lasso.tr$lambda)
-
 max <- which.max(auc)
 points(log(lasso.tr$lambda[max]),auc[max],col="red",pch=19)
-
 best <- order(auc,decreasing = TRUE)[1]
 lr.probs <- pred[,best]
-
 #Koeficijenti najboljeg finalnog modela
 lam.best=lasso.tr$lambda[best]
 lam.best
@@ -557,13 +492,11 @@ coef(lasso.tr,s=lam.best)
 # Choosing the cutoff-a
 ```{r,eval=FALSE}
 cutoff<-seq(from=quantile(lr.probs)[1],to=quantile(lr.probs)[5],by=0.01)
-
 Misclas<-rep(NA,length(cutoff))
 FN<-rep(NA,length(cutoff))
 FP<-rep(NA,length(cutoff))
 AUC<-rep(NA,length(cutoff))
 PurchaseAccuracy<-rep(NA,length(cutoff))
-
 j=1
 for(i in cutoff){
   lr.pred=ifelse(lr.probs>i,"TA","Direct")
@@ -587,7 +520,6 @@ plot(cutoff,FN,type="l",col="blue")
 points(cutoff,FP,type="l",col="orange")
 points(cutoff,Misclas,type="l")
 plot(cutoff,AUC,type="l")
-
 cutoff[which.max(AUC)]
 ```
 
@@ -595,14 +527,11 @@ cutoff[which.max(AUC)]
 probaj ovdje da napravis razne kombinacije sa polynomima
 ```{r,eval=FALSE}
 gam.fit<-glm(marks~.-e_acf1-e_acf10-x_acf10-diff1_acf1-diff1_acf10-diff2_acf1-diff2_acf10, data=train.data[,-1],family=binomial);summary(gam.fit)
-
 preds=predict(gam.fit,test.data,type = "response")
 #ako dodas i se=T onda mozes izracunati i predikcione intervale
 #se.bands=preds$fit + cbind(fit=0,lower=-2*preds$se,upper=2*preds$se)
 #se.bands[1:5,]
-
 lr.pred <- preds
-
 lr.pred=ifelse(lr.probs>0.5,"TA","Direct")
 t<-table(lr.pred,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
@@ -630,11 +559,8 @@ roc.curve(ClassTable[-train,"marks"],lr.pred)
 ```{r}
 library(gam)
 gam.fit<-gam(marks~.,family = binomial, data=train.data);summary(gam.fit)
-
 gam.fit<-gam(marks~.+s(trend,df=3)+s(seas_acf1,df=3)+s(linearity,df=3)+s(entropy,df=3)+s(x_acf1,df=3)+s(seasonal_strength,df=3)+s(seas_acf1,df=3),family = binomial, data=train.data);summary(gam.fit)
-
 plot(gam.fit,se=T,col ="green")
-
 preds=predict(gam.fit,newdata = test.data,type = "response")
 attributes(preds)
 preds[1:5]
@@ -665,22 +591,17 @@ roc.curve(ClassTable[-train,"marks"],GAM.pred)
 ```{r,eval=FALSE}
 require(tree)
 tree=tree(marks~trend+seas_acf1+linearity+entropy+x_acf1+seasonal_strength+seas_acf1,data=train.data)
-
 tree=tree(marks~trend+seas_acf1+linearity+entropy,data=train.data[,-1])
-
 summary(tree)
 plot(tree)
 text(tree,pretty=0)
-
 tree.pred=predict(tree,ClassTable[-train,],type="class")
 table(tree.pred,ClassTable[-train,"marks"])
-
 ```
 
 # Random Forests
 ```{r}
 # require(randomForest)
-
 #rf<-randomForest(marks~., data=train.data);summary(rf)
 #rf
 ```
@@ -742,27 +663,21 @@ legend("topright",legend=c("m=42","m=21","m=10","m=6"),pch=19,col=c("red","blue"
 # 5.2 Fiting best random forest tree
 ```{r}
 #Pravljenje ali na ne sklairanim podacima, ako hoces na skaliranim podacima samo stavi train.data
-
 metrics1 <- cbind(origin,features)
 ClassTable1<-cbind(metrics1,marks)
 train.data1<-ClassTable1[train,]
 test.data1<-ClassTable1[-train,]
-
 #rf2=randomForest(marks~.,data=train.data1,mtry=10,ntree=4000, importance=TRUE);rf2
 #rf2 <- randomForest(marks~.,data=train.data1,mtry=25,ntree=4000, importance=TRUE) # testirano je ovo ponovo 14.01. jer je na grafiku gore ispao ovaj setup najbolji ali kada se poredi sa ovim ispod za nijansu je losiji ali je puno sporiji. Tako da je ovaj donji setup sa 10 varijabli i 100 drveca ubjeljivo najbolji.
 rf2=randomForest(marks~.,data=train.data1,mtry=10,ntree=100, importance=TRUE);rf2
   importance(rf2)
   varImpPlot(rf2)
-
 rf.pred<-predict(rf2,test.data1)# ako stavis tyoe = prob dobices vjerovatnoce da pripada jednoj ili drugoj klasi.
-
 # Isprobano je i sa prob pa je inda preko cuttoff biran odsjecak ali bolje to uradi sam rf sa direktnim klasifikacijama.
 # pred=predict(rf2,ClassTable[-train,],type="prob")
 # vjerovatnoce <- pred[,2]
 # cut_rf <- cutoff_nn(as.numeric(vjerovatnoce))
-
 (classificationMetrics(rf.pred,test.data1[,"marks"],posClass = "TA")["err"]*100)
-
 table(rf.pred,test.data1[,"marks"])
 roc.curve(test.data1[,"marks"],rf.pred)
 ```
@@ -770,11 +685,9 @@ roc.curve(test.data1[,"marks"],rf.pred)
 #Ploting the level of importance
 ```{r}
 fit.rf <- rf2
-
 feat_imp_df <- importance(fit.rf, type = 2) %>% 
   data.frame() %>% 
   mutate(feature = row.names(.)) 
-
 # plot dataframe
 ggplot(feat_imp_df, aes(x = reorder(feature, MeanDecreaseGini), 
                         y = MeanDecreaseGini, label=round(MeanDecreaseGini))) +
@@ -790,9 +703,7 @@ ggplot(feat_imp_df, aes(x = reorder(feature, MeanDecreaseGini),
     title = "Feature Importance: Random Forests"
   )
 #idea for graphs http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
-
 png("Fig importance.png",  width = 300, height = 150, units = 'mm', res = 300)
-
 #300 dpi figure for paper
 ggplot(feat_imp_df, aes(x = reorder(feature, MeanDecreaseGini), 
                         y = MeanDecreaseGini, label=round(MeanDecreaseGini))) +
@@ -807,14 +718,12 @@ ggplot(feat_imp_df, aes(x = reorder(feature, MeanDecreaseGini),
     y     = "Mean decrease in node impurity (Gini index)",
     title = "Feature Importance: Random Forests"
   )
-
 dev.off()
 ```
 
 #Partial dependence plots
 ```{r}
 partialPlot(rf2, test.data, trend, which.class = "TA")
-
 imp <- importance(rf2)
 impvar <- rownames(imp)[order(imp[, "MeanDecreaseGini"], decreasing=TRUE)]
 op <- par(mfrow=c(3, 2))
@@ -824,7 +733,6 @@ for (i in 1:6) {
 }
 par(op)
 #https://rpubs.com/mdwybron/487157# primjer tumacenja varijabli
-
 #Ako stavis which.class = "TA", to onda pokazuje dependence plot kada treba agregirati podatke pa onda prognozirati. Ako stavis BU onda je kada treba direktno prognozirati pa aggregirati prognoze
 ```
 
@@ -833,32 +741,24 @@ par(op)
 # library(plotmo)
 #plotmo(rf2, pmethod="partdep",col.persp="cyan",degree1 = c(1,2,3,4),degree2 = c(1,2,3,4),ylim = c(1.625,1.635)) # plot first 4 partial dependencies and 4 interactions
 #plotmo(rf2, pmethod="partdep",type="prob",col.persp="cyan",degree1 = c(1,2),degree2 = c(0),ylim = c(0.55,0.65))
-
 plotmo(rf2, pmethod="partdep",type="prob",col.persp="cyan",all1=TRUE,degree2 = c(0),ylim = c(0.55,0.65)) #Dodaj trace = 1
-
 #Zakljucak skoro identican grafik se dobija sa 4000 drveca i 100, zato koristi tu od 100 zbog brzeg proracuna
 ```
 
 ```{r, eval=FALSE}
 #plotmo(rf2, pmethod="apartdep",type="prob",col.persp="cyan",degree1 = c(1,2),degree2 = c(1,2),ylim = c(0.55,0.65))
-
 plotmo(rf2, pmethod="apartdep",type="prob",col.persp="cyan",all1 = TRUE,all2 = TRUE,ylim = c(0.55,0.65))
 ```
 
 
 ```{r, eval=FALSE}
-
 par(mfrow=c(3,2))
-
 for (i in 1:6) {
   
 plotmo(rf2, pmethod="apartdep",type="prob",nresponse="TA",col.persp="cyan",degree1=impvar[i],degree2=c(0),xlab=impvar[i],main=paste("Partial Dependence on", impvar[i]),ylim = c(0.55,0.65), do.par=FALSE)
-
 }
 par(op)
-
 #ako stavis pmethod="apartdep" onda aprksimiras partdep brže. Možeš staviti pmethod="partdep" ali ide sporo
-
 #degree2=c("curvature","trend") samo tu određenu interekciju pravi, a degree2="trend" pokazuje svu interakciju sa tom varijablom
 ```
 ## Interactions with plotmo
@@ -868,35 +768,26 @@ plotmo(rf2, pmethod="apartdep",type="prob",nresponse="TA",col.persp="cyan",degre
 
 ```{r}
 # library("iml")
-
 a <- 1000
 #a <- 30000
 X <- train.data1[1:a,][-which(names(train.data1) == "marks")]
 y <- train.data1[1:a,]$marks
 y <- as.factor(ifelse(y=="Direct","Aggregate data","Aggregate forecasts"))
 rf2x <- rf2; rf2x$classes <- c("Aggregate data","Aggregate forecasts")
-
 mod1 <- Predictor$new(rf2x, data = X, y = y, type = "prob")
-
 mod2 <- Predictor$new(rf2x,
                      data = X, y = y == "Aggregate forecasts",
                      type = "prob", class = "Aggregate forecasts"
 )
-
 impo <- FeatureImp$new(mod2, loss = "ce")
 plot(impo)
-
 effs2 <- FeatureEffects$new(mod2,method = "pdp")
 plot(effs2)
-
 effs2$plot(features=impvar[1:6], ncol=2,nrow=3)
-
 #the most common features for practitioners
 effs2$plot(features=c("seasonal_strength","trend","mean","var","CV","linearity","nonlinearity"), ncol=3)
-
 #postoji i opcija da imas razlicite y skale, pogledaj ako ti bude trebalo detaljnije 
 # https://cran.r-project.org/web/packages/iml/iml.pdf
-
 #Ako zelis da se vide oba klasifikaciona tjemena
 effs1 <- FeatureEffects$new(mod1,method = "pdp")
 effs1$plot(features=impvar[1:6], ncol=2,nrow=3)
@@ -905,9 +796,7 @@ effs1$plot(features=impvar[1:6], ncol=2,nrow=3)
 ## Pravljenje slike 300 dpi
 ```{r}
 png("Fig pdpx.png",  width = 200, height = 120, units = 'mm', res = 300)
-
 effs1$plot(features=impvar[1:6], ncol=2,nrow=3)
-
 dev.off()
 ```
 
@@ -925,7 +814,6 @@ dev.off()
 # test.data[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
 train.data01 <- train.data
 test.data01 <- test.data
-
 train.data01[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
 test.data01[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
 #Varijabla o kojoj se klasifikuje (marks) mora biti numeric 0 ili 1, ne faktor nikako!
@@ -934,7 +822,6 @@ test.data01[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
 # 6.1 Tree interaction depth=?
 ```{r}
 source("R_sesions/cutoff_bost.R")
-
 test.err=double(17)
 for(n.depth in 1:17){
   fit.boost=gbm(marks~.,data=train.data01, distribution="bernoulli",n.trees=1000,shrinkage=0.01,interaction.depth=n.depth) #Distribution je bernuli jer je u pitanju klasifikacija
@@ -946,7 +833,6 @@ for(n.depth in 1:17){
   pred<-ifelse(pred>=cut,1,0)
   test.err[n.depth]=classificationMetrics(pred,test.data01[,"marks"])[c("err")]*100
   cat(n.depth, test.err[n.depth]," ")
-
 }
 plot(1:n.depth,test.err,type="b",col="blue")
 #From the graph, n.depth=10 i dalje pada trabas napraviti da se vidi do npr 20
@@ -976,11 +862,8 @@ berr<-double(length(n.trees))
 while(i<=length(n.trees)){
 i=i+1
 fit.boost=gbm(marks~.,data=train.data01,distribution="bernoulli",n.trees=n.trees[i],shrinkage=0.01,interaction.depth=10)
-
 predmat=predict(fit.boost,newdata=test.data01,n.trees=n.trees[i],type="response")
-
 cut <- cutoff_bost(predmat)
-
 pred.boost<-ifelse(predmat>=cut,1,0)
 berr[i]=(classificationMetrics(pred.boost,test.data01[,"marks"]))[c("err")]*100
 cat(i,berr[i]," ")
@@ -993,7 +876,6 @@ abline(h=min(berr),col="red")
 which(berr==min(berr))
 points(n.trees[min(which(berr==min(berr)))],min(berr),col="red",pch=20)
 #From the graph, simplest model with min classification error is n.trees=2700
-
 ```
 
 # Best boosting tree
@@ -1002,10 +884,8 @@ points(n.trees[min(which(berr==min(berr)))],min(berr),col="red",pch=20)
 #Mada je razlika bukvalno milimetarska kod ovog acc bude 0.634, a donjeg 0.636, ali zbog grafika iznda stavio sam kao donji...mada se prvi brže fituje.
 fit.best=gbm(marks~.,data=train.data01,distribution="bernoulli",n.trees=4500,shrinkage=0.01,interaction.depth=10)
 effect <- summary(fit.best)
-
 plot(fit.best,i="trend")
 predmat=predict(fit.best,newdata=test.data01,n.trees=1100,type="response")
-
 boost.probs <- predmat
 ```
 
@@ -1015,7 +895,6 @@ feat_imp_df <- summary(fit.best) %>%
   data.frame() %>% 
   mutate(feature = row.names(.)) 
 feat_imp_df <- feat_imp_df[,2:3]
-
 # plot dataframe
 ggplot(feat_imp_df, aes(x = reorder(feature, rel.inf), 
                         y = rel.inf)) +
@@ -1062,7 +941,6 @@ roc.curve(test.data[,"marks"],boost.pred)
 ```{r,eval=FALSE}
 # library(e1071)
 tune.out=tune(e1071::svm,as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial", ranges=list(cost=c(0.001 , 0.01, 0.1, 1,5,10,100),gamma=c(0.5,1,2,3,4)))
-
 summary(tune.out)
 tune.out$best.model
 #cost 1 gama 0.5 je najbolja kombinacija parametara
@@ -1098,7 +976,6 @@ roc.curve(as.factor(test.data[,"marks"]),svm.pred) # ne crta se ovako za SVM mod
 # ROC za SVM
 ```{r, eval=FALSE}
 fit.svm=svm(as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial",cost=1,gama=4, decision.values = T)#sada ce davati vjerovatnoce ne samo class labels
-
 fitted=attributes(predict(fit.svm,train.data, decision.values =TRUE))$decision.values
 ```
 
@@ -1109,7 +986,6 @@ rocplot =function (pred,truth,...){
   predob= prediction(pred,truth )
   perf= performance(predob, "tpr", "fpr")
   plot(perf ,...)}
-
 par(mfrow =c(1,2))
 rocplot(fitted,as.factor(train.data[,"marks"]), main=" Training Data")
 ```
@@ -1118,11 +994,8 @@ rocplot(fitted,as.factor(train.data[,"marks"]), main=" Training Data")
 ```{r, results='hide'}
 # fitted = attributes(predict(fit.svm,test.data, decision.values =T))$decision.values
 # rocplot(fitted,as.factor(test.data[,"marks"]), main ="Test Data")
-
 fit2=svm(as.factor(marks)~.,data=train.data,scale=FALSE,kernel="radial",cost=5,gama=1, decision.values = T)
-
 fitted2=attributes(predict(fit2,test.data,decision.values =T))$decision.values#fitted je od 0 do 1
-
 cut <- cutoff_nn(as.vector(fitted2))
 svm.pred <- ifelse(fitted2>cut,"TA","Direct")
 #Interesanta je situacija da SVM kao i RF daje losije prognoze za isti model kada se trazi ovaj cut, kada direktno prognoziras svm.pred1 onda dobijas tacnije progoze.
@@ -1137,7 +1010,6 @@ svm.pred <- svm.pred1
 # Null classifier
 ```{r}
 nulll=rep("TA",dim(test.data)[1])
-
 (Nulleval <- c(classificationMetrics(ClassTable[-train,"marks"],as.factor(nulll),posClass = "TA"),AUC=roc.curve(as.factor(test.data[,"marks"]),as.factor(nulll),FALSE)$auc,classificationMetrics(ClassTable[-train,"marks"],as.factor(nulll),posClass = "TA","totU",cbM)))
 ```
 
@@ -1163,14 +1035,10 @@ for(size in 1:10){
 }
 matplot(1:size,test.err,pch=19,col=c("red"),type="b",ylab="Misclassification Error")
 legend("topright",legend=c("Test"),pch=19,col=c("red"))#From the graph size=2
-
-
 matplot(1:size,AUC.err,pch=19,col=c("red"),type="b",ylab="AUC")
 legend("topright",legend=c("AUC"),pch=19,col=c("red"))#From the graph size=10
-
 matplot(1:size,f.err,pch=19,col=c("red"),type="b",ylab="F Error")
 legend("topright",legend=c("F"),pch=19,col=c("red"))#From the graph size=10
-
 # The optimal setup is 10 neurons
 ```
 
@@ -1185,7 +1053,6 @@ fit_op
 source("cutoff_nn.R")# jedina razlika u odnosu na stadnardni cuttoff kod je sto ne max auc nego minimizujes gresku i na taj ancin poboljsavas ishod na slikama ispod za nn modele
 nn.probs=predict(fit_op,test.data)
 cut_nn <- cutoff_nn(as.numeric(nn.probs))
-
 i<-cut_nn
 nn.pred=ifelse(nn.probs>i,"TA","Direct")
 t<-table(nn.pred,ClassTable[-train,"marks"]);print(t)
@@ -1208,10 +1075,8 @@ dataset <- dataset[,-42]
 View(dataset)
 dim(dataset)
 train_idx <- train
-
 df_dataset <- dataset(
   name = "dataset",
-
   initialize = function(df, feature_variables, response_variable) {
     
     self$df <- df[, feature_variables]
@@ -1229,27 +1094,19 @@ df_dataset <- dataset(
     length(self$response_variable)
   }
 )
-
 feature_var <- c(colnames(dataset)[1:41])
-
 response <- 'model_class'
-
 dataset_train <- df_dataset(dataset[train_idx,], 
                              feature_variables = feature_var, 
                              response_variable = response)
-
 dataset_test <- df_dataset(dataset[-train_idx,],
                             feature_variables = feature_var, 
                             response_variable = response)
-
 dataset_train$.getitem(100)
-
 # This is using all the training data:
 # dl_train <- dataloader(dataset_train, shuffle = TRUE)
 # dl_test <-  dataloader(dataset_test)
-
 # Batch data:
-
 dl_train <- dataloader(dataset_train, batch_size=10000, shuffle = TRUE)
 dl_test <-  dataloader(dataset_test, batch_size=10000)
 ```
@@ -1273,7 +1130,6 @@ dl_test <-  dataloader(dataset_test, batch_size=10000)
 #       self$fc3() 
 #   }
 # )
-
 ## Optimal setup
 # Deep learning netwrok with 10 hiden layers xy nodes adn xy paramaters to fit.
 net <- nn_module(
@@ -1313,14 +1169,12 @@ net <- nn_module(
       self$fc10()
   }
 )
-
 model <- net()
 ```
 
 # Optimize the net
 ```{r}
 optimizer <- optim_adam(model$parameters)
-
 for (epoch in 1:500) {
   l <- c()
   
@@ -1335,9 +1189,7 @@ for (epoch in 1:500) {
   cat(sprintf("Loss at epoch %d: %3f\n", epoch, mean(l)))
 }
 model$eval()
-
 test_losses <- c()
-
 for (b in enumerate(dl_test)) {
   output <- model(b[[1]])
   loss <- nnf_binary_cross_entropy_with_logits(output, b[[2]])
@@ -1350,7 +1202,6 @@ mean(test_losses)
 ```{r}
 # Placeholder vector for probabilities
 out_log_odds = c()
-
 for (b in enumerate(dl_test)) {
   # get log odds
   output <- model(b[[1]])
@@ -1360,7 +1211,6 @@ for (b in enumerate(dl_test)) {
   out_log_odds <- c(out_log_odds, log_odds)
   prob <-exp(out_log_odds)/(1+exp(out_log_odds))
 }
-
 head(out_log_odds)
 head(prob);summary(prob)
 ```
@@ -1375,7 +1225,6 @@ mean(predicted ==dataset[-train_idx,"model_class"])
 ## Best cutoff
 ```{r}
 cut_nn <- cutoff_nn(prob)
-
 i<-cut_nn
 t.pred=ifelse(prob>i,"TA","Direct")
 t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
@@ -1394,16 +1243,12 @@ t.pred <- as.factor(t.pred)
 ```{r}
 train.data01 <- train.data
 test.data01 <- test.data
-
 train.data01[,"marks"]<-(ifelse(train.data[,"marks"]=="TA",1,0))
 test.data01[,"marks"]<-(ifelse(test.data[,"marks"]=="TA",1,0))
-
 x_train = data.matrix(train.data01[,-43])                  # independent variables for train
 y_train = train.data01[,43]                                # dependent variables for train
-
 X_test = data.matrix(test.data01[,-43])                    # independent variables for test
 y_test = test.data01[,43]    
-
 xgboost_train = xgb.DMatrix(data=x_train, label=y_train)
 xgboost_test = xgb.DMatrix(data=X_test, label=y_test)
 ```
@@ -1425,30 +1270,20 @@ for(depth in 1:30){
 }
 matplot(1:depth,test.xg.err,pch=19,col=c("red"),type="b",ylab="Misclassification Error")
 legend("topright",legend=c("Test"),pch=19,col=c("red"))#From the graph size=2
-
-
 matplot(1:depth,AUC.xg.err,pch=19,col=c("red"),type="b",ylab="AUC")
 legend("topright",legend=c("AUC"),pch=19,col=c("red"))#From the graph size=10
-
 matplot(1:depth,f.xg.err,pch=19,col=c("red"),type="b",ylab="F Error")
 legend("topright",legend=c("F"),pch=19,col=c("red"))#From the graph size=10
-
 # The optimal setup is 23 variables
-
 which.min(test.xg.err) #23 variables
-
 ```
 
 # Best XG model
 ```{r}
 xg <- xgboost(data = xgboost_train, max.depth=23,nrounds=500,objective = "binary:logistic")
-
 summary(xg)
-
 pred_test = predict(xg, xgboost_test)
-
 cut_xg <- cutoff_nn(pred_test)
-
 i<-cut_xg
 xg.pred=ifelse(pred_test>i,"TA","Direct")
 t<-table(xg.pred,ClassTable[-train,"marks"]);print(t)
@@ -1469,11 +1304,9 @@ xg.pred <- as.factor(xg.pred)
 library(keras)
 # devtools::install_github("rstudio/tensorflow")
 library(tensorflow)
-
 # install_tensorflow()
 #https://github.com/rstudio/keras/issues/1311
 # Ili pogledaj iz ISLR2 knjige
-
 model <- keras_model_sequential() %>% 
   layer_dense(units = 80, activation = "relu", input_shape = c(42)) %>%
   layer_dropout(rate = 0.6) %>%
@@ -1481,20 +1314,17 @@ model <- keras_model_sequential() %>%
   layer_dropout(rate = 0.3) %>%
   layer_dense(units = 5, activation = "relu") %>% 
   layer_dense(units = 1, activation = "sigmoid")
-
 val_indices <- 1:5000
 x_val <- x_train[val_indices,]
 partial_x_train <- x_train[-val_indices,]
  
 y_val <- y_train[val_indices]
 partial_y_train <- y_train[-val_indices]
-
 model %>% compile(
   optimizer = "rmsprop",
   loss = "binary_crossentropy",
   metrics = c("accuracy")
 )
-
 history <- model %>% fit(
    partial_x_train,
    partial_y_train,
@@ -1502,31 +1332,27 @@ history <- model %>% fit(
  # batch_size=5000,
    validation_data = list(x_val, y_val)
  )
-
 history$params
 str(history)
 history$metrics$accuracy
-
 plot(history , smooth = FALSE)
 which.max(history$metrics$val_accuracy)
-
 model %>% fit(
   x_train,
   y_train,
   epochs=which.max(history$metrics$val_accuracy),
   #batch_size=1000
 )  
-
 results <- model %>% evaluate(X_test, y_test)
 results
-
 predTF1 <- predict(model, X_test)
-# model %>% predict(X_test) 
+# model %>% predict(X_test)
+
+predTF1 <- as.numeric(predTF1)
 
 cut_nn <- cutoff_nn(predTF1)
-
 i<-cut_nn
-pred1=ifelse(predTF1>i,"TA","Direct")
+predTF1=ifelse(predTF1>i,"TA","Direct")
 t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
 (t[2,1]/(t[1,1]+t[2,1]))#FP
@@ -1539,27 +1365,23 @@ predTF1 <- as.factor(predTF1)
 # Recurrent neural network
 ```{r}
 # RNN
-
 # Provjeri gore kod XG bosta da promjenis ovo sa velikim i malim x
 # x_train <- x_train
 # y_train 
 # x_test <- X_test
 # y_test
-
 # Define the model architecture
 model <- keras_model_sequential()
 model %>%
   layer_lstm(units = 64, input_shape = c(42, 1)) %>%
   layer_dropout(rate = 0.2) %>%
   layer_dense(units = 1, activation = "sigmoid")
-
 # Compile the model
 model %>% compile(
   loss = "binary_crossentropy",
   optimizer = optimizer_adam(),
   metrics = c("accuracy")
 )
-
 # Train the model
 history <- model %>% fit(
   x_train, y_train,
@@ -1567,22 +1389,19 @@ history <- model %>% fit(
   batch_size = 32,
   validation_data = list(x_test, y_test)
 )
-
 # Evaluate the model on the testing set
 scores <- model %>% evaluate(x_test, y_test, verbose = 0)
 cat("Accuracy: ", scores[2], "\n")
-
 # Plot the training history
 plot(history)
-
 predy <- predict(model, X_test) > 0.5
 mean(abs(y_test == as.numeric(predy)))
-
 predRNN <- predict(model, X_test)
 
+predRNN <- as.numeric(predRNN)
 cut_nn <- cutoff_nn(predRNN)
-
 i<-cut_nn
+
 predRNN=ifelse(predRNN>i,"TA","Direct")
 t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
 (t[1,2]/(t[1,2]+t[2,2]))#FN
@@ -1603,14 +1422,12 @@ model %>%
   layer_dropout(rate = 0.2) %>%
   layer_flatten() %>%
   layer_dense(units = 1, activation = "sigmoid")
-
 # Compile the model
 model %>% compile(
   loss = "binary_crossentropy",
   optimizer = optimizer_adam(),
   metrics = c("accuracy")
 )
-
 # Train the model
 history <- model %>% fit(
   x_train, y_train,
@@ -1618,18 +1435,16 @@ history <- model %>% fit(
   batch_size = 32,
   validation_data = list(x_test, y_test)
 )
-
 # Evaluate the model on the testing set
 scores <- model %>% evaluate(x_test, y_test, verbose = 0)
 cat("Accuracy: ", scores[2], "\n")
-
 # Plot the training history
 plot(history)
-
 predCNN <- predict(model, X_test)
 
-cut_nn <- cutoff_nn(predCNN)
+predCNN <- as.numeric(predCNN)
 
+cut_nn <- cutoff_nn(predCNN)
 i<-cut_nn
 predCNN=ifelse(predCNN>i,"TA","Direct")
 t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
@@ -1641,7 +1456,6 @@ predCNN <- as.factor(predCNN)
 (CNNeval <- c(classificationMetrics(test.data[,"marks"],predCNN,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],predCNN,FALSE)$auc,classificationMetrics(test.data[,"marks"],predCNN,posClass = "TA","totU",cbM)))
 ```
 
-
 # Evaluation table
 ```{r}
 (EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval,XGeval,TF1eval,RNNeval,CNNeval))
@@ -1650,7 +1464,6 @@ predCNN <- as.factor(predCNN)
 #Evaluation on the classification performance
 ```{r}
 source("R/classificator.R")
-
 nulll
 lr.pred <- as.factor(lr.pred)
 #lda.pred$class
@@ -1661,7 +1474,6 @@ GAM.pred <- as.factor(GAM.pred)
 #rf.pred
 boost.pred <- as.factor(boost.pred)
 svm.pred <- as.factor(svm.pred)
-
   class1 <- classificator(ideal_matrix,lr.pred,Ideal = TRUE)
   class2 <- classificator(ideal_matrix,lda.pred$class,Ideal = TRUE)
   class3 <- classificator(ideal_matrix,lqda.pred$class,Ideal = TRUE)
@@ -1682,7 +1494,6 @@ svm.pred <- as.factor(svm.pred)
   table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4],class12[,4],class13[,4],class14[,4],class15[,4],class16[,4])
   colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "FNN", "DL_Torch","XG Boost","TensorFlow","RNN","CNN")
   nemenyi(as.matrix(table_all),plottype="vmcb")
-
   #without ideal classificator
   nemenyi(as.matrix(table_all[,-3]),plottype="vmcb")
 ```
@@ -1690,12 +1501,10 @@ svm.pred <- as.factor(svm.pred)
 #High quality figure
 ```{r}
 png("Fig_MCB_all3.png",  width = 300, height = 150, units = 'mm', res = 300)
-
 colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch","XG Boost","TensorFlow","RNN","CNN")
   
   #without ideal and null classifications
   nemenyi(as.matrix(table_all[,-c(3,13)]),plottype="vmcb")
-
 dev.off()
 ```
 
@@ -1719,12 +1528,9 @@ xg_boost <- sum(table(xg.pred,ClassTable[-train,"marks"])*cbM)
 tf_CB <- sum(table(predTF1,ClassTable[-train,"marks"])*cbM)
 RNN_CB <- sum(table(predRNN,ClassTable[-train,"marks"])*cbM)
 CNN_CB <- sum(table(predCNN,ClassTable[-train,"marks"])*cbM)
-
-
 table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB,nn_DL,xg_boost,tf_CB,RNN_CB,CNN_CB))
 colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","FNN","DL Torch","XG Boost","TensorFlow","RNN","CNN")
 rownames(table_CB) <- c("Overall RMSSE")
-
 #export table
  write.table(table_CB, file = "shiny app/ML_models/table_CB.txt", sep = "\t",row.names=TRUE)
 ```
@@ -1734,7 +1540,6 @@ rownames(table_CB) <- c("Overall RMSSE")
 png("Fig_pairs.png",  width = 600, height =300, units = 'mm', res = 300)
   
 pairs(ClassTable[,c(impvar[1:9],"marks")],labels = c(impvar[1:9],"AD & AF"), col=ClassTable$marks)
-
 dev.off()
 ```
 
