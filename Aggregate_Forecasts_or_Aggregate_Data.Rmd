@@ -1455,10 +1455,41 @@ t<-table(t.pred,ClassTable[-train,"marks"]);print(t)
 predCNN <- as.factor(predCNN)
 (CNNeval <- c(classificationMetrics(test.data[,"marks"],predCNN,posClass = "TA"),AUC=roc.curve(test.data[,"marks"],predCNN,FALSE)$auc,classificationMetrics(test.data[,"marks"],predCNN,posClass = "TA","totU",cbM)))
 ```
+#  Dynamic Time Warping (DTW)
+
+```{r}
+library(class)
+library(dtw)
+
+trainData <- train.data
+testData <- test.data
+
+# Define the DTW distance function
+dtw.dist <- function(x, y) dtw(x, y, keep=TRUE)$distance
+
+# Train the model using the k-NN algorithm with DTW distance
+k <- 5 # number of nearest neighbors
+trainLabels <- trainData$marks
+testLabels <- testData$marks
+#predLabels <- knn(train = trainData[, -5], test = testData[, -5], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE, distance = dtw.dist)
+predLabels <- knn(train = trainData[,-c(1,43)], test = testData[,-c(1,43)], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE)
+
+
+t <- table(predLabels,ClassTable[-train,"marks"]);print(t)
+(t[1,2]/(t[1,2]+t[2,2]))#FN
+(t[2,1]/(t[1,1]+t[2,1]))#FP
+mean(predLabels==ClassTable[-train,"marks"])
+roc.curve(ClassTable[-train,"marks"],predLabels)
+
+(DTWeval <- c(classificationMetrics(ClassTable[-train,"marks"],predLabels,posClass = "TA"),AUC=roc.curve(ClassTable[-train,"marks"],predLabels,FALSE)$auc,classificationMetrics(ClassTable[-train,"marks"],predLabels,posClass = "TA","totU",cbM)))
+
+```
+
+
 
 # Evaluation table
 ```{r}
-(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval,XGeval,TF1eval,RNNeval,CNNeval))
+(EvalTable <- rbind(Nulleval,LReval,LDAeval,QDAeval,KNNeval,Lassoeval,GAMeval,RFeval,Boostingeval,SVMeval,FNNeval,Teval,XGeval,TF1eval,RNNeval,CNNeval, DTWeval))
 ```
 
 #Evaluation on the classification performance
@@ -1490,9 +1521,10 @@ svm.pred <- as.factor(svm.pred)
   class14 <- classificator(ideal_matrix,predTF1,Ideal = TRUE)
   class15 <- classificator(ideal_matrix,predRNN,Ideal = TRUE)
   class16 <- classificator(ideal_matrix,predCNN,Ideal = TRUE)
+  class17 <- classificator(ideal_matrix,predLabels,Ideal = TRUE)
   
-  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4],class12[,4],class13[,4],class14[,4],class15[,4],class16[,4])
-  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "FNN", "DL_Torch","XG Boost","TensorFlow","RNN","CNN")
+  table_all <- cbind(ideal_matrix[-train,1:3],class1[,4],class2[,4],class3[,4],class4[,4],class5[,4],class6[,4],class7[,4],class8[,4],class9[,4],class10[,4],class11[,4],class12[,4],class13[,4],class14[,4],class15[,4],class16[,4],class17[,4])
+  colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null", "FNN", "DL_Torch","XG Boost","TensorFlow","RNN","CNN","DTW")
   nemenyi(as.matrix(table_all),plottype="vmcb")
   #without ideal classificator
   nemenyi(as.matrix(table_all[,-3]),plottype="vmcb")
@@ -1528,8 +1560,10 @@ xg_boost <- sum(table(xg.pred,ClassTable[-train,"marks"])*cbM)
 tf_CB <- sum(table(predTF1,ClassTable[-train,"marks"])*cbM)
 RNN_CB <- sum(table(predRNN,ClassTable[-train,"marks"])*cbM)
 CNN_CB <- sum(table(predCNN,ClassTable[-train,"marks"])*cbM)
-table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB,nn_DL,xg_boost,tf_CB,RNN_CB,CNN_CB))
-colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","FNN","DL Torch","XG Boost","TensorFlow","RNN","CNN")
+DTW_CB <- sum(table(predLabels,ClassTable[-train,"marks"])*cbM)
+
+table_CB <- matrix(nrow = 1, c(AF_CB,AD_CB,Ideal_CB,lr_CB,lda_CB,qda_CB,knn_CB,lasso_CB,GAM_CB,rf_CB,boost_CB,svm_CB,nn_CB,nn_DL,xg_boost,tf_CB,RNN_CB,CNN_CB, DTW_CB))
+colnames(table_CB) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","FNN","DL Torch","XG Boost","TensorFlow","RNN","CNN","DTW")
 rownames(table_CB) <- c("Overall RMSSE")
 #export table
  write.table(table_CB, file = "shiny app/ML_models/table_CB.txt", sep = "\t",row.names=TRUE)
