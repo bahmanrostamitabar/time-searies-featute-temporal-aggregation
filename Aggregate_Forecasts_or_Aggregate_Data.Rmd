@@ -1533,7 +1533,7 @@ svm.pred <- as.factor(svm.pred)
 #High quality figure
 ```{r}
 png("Fig_MCB_all3.png",  width = 300, height = 150, units = 'mm', res = 300)
-colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch","XG Boost","TensorFlow","RNN","CNN")
+colnames(table_all) <- c("AF","AD","Ideal","LR","LDA","QDA","KNN","Lasso","GAM","RF","Boosting","SVM","Null","FNN","DL Torch","XG Boost","TensorFlow","RNN","CNN","DTW")
   
   #without ideal and null classifications
   nemenyi(as.matrix(table_all[,-c(3,13)]),plottype="vmcb")

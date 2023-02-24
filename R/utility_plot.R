@@ -15,9 +15,9 @@
 library(forcats)
 library(tidyr)
 
-table_fig <- table_CB %>% as_tibble() %>% pivot_longer(cols = 2:15, names_to = "ML model",values_to = "Overall RMSSE")
+table_fig <- table_CB %>% as_tibble() %>% pivot_longer(cols = 2:19, names_to = "ML model",values_to = "Overall RMSSE")
 
-utility_plot <- table_fig[1:14,] %>%
+utility_plot <- table_fig[1:18,] %>%
   ggplot(aes(x=  fct_reorder(`ML model`,`Overall RMSSE`) , y=`Overall RMSSE`)) +
   geom_point(colour="black", size=3) +
   geom_segment(color="grey", lty=3, aes(x=`ML model`,
