@@ -381,9 +381,23 @@ GAM &  0.6042137 & 0.4383333 & 0.5707890\\
 \hline
 RF & 0.7773134 & 0.3367361 & 0.5704724\\
 \hline
-Boosting & 0.5900013 & 0.4362500 & 0.5847010\\
+Boosting & 0.7646663 & 0.3640972 & 0.5267067\\
 \hline
-SVM & 0.6622840 & 0.4031250 & 0.5852111\\
+SVM & 0.7646663 & 0.3640972 & 0.5318491\\
+\hline
+FNN & 0.7649972 & 0.3724306 & 0.5128323\\
+\hline
+DL Torch & 0.7649434 & 0.3678472 & 0.5230656\\
+\hline
+XG Boost & 0.7688268 & 0.3423611 & 0.5728495\\
+\hline
+TensorFlow & 0.7669575 & 0.3690972 & 0.5166527\\
+\hline
+RNN & 0.7659351 & 0.3710417 & 0.5142032\\
+\hline
+CNN & 0.7662412 & 0.3700694 & 0.5158014\\
+\hline
+DTW & 0.7093325 & 0.3888889 & 0.5616327\\
 \hline
 \end{tabular}
 \end{table}
@@ -418,8 +432,8 @@ SVM & 0.6622840 & 0.4031250 & 0.5852111\\
 <!-- \end{tabular} -->
 <!-- \end{table} -->
 
-```{r MCB_ML, echo=FALSE,fig.align='center', out.width="100%", fig.cap = "Performance of different models evaluated through MCB test. RMSSE errors are used for computing the ranks and a 95 percentile confidence level."}
-knitr::include_graphics("img/300dpi/Fig_MCB_all.png")
+```{r MCB_ML, echo=FALSE,fig.align='center', out.width="100%", fig.cap = "\\textcolor{blue}{Performance of different models evaluated through MCB test. RMSSE errors are used for computing the ranks and a 95 percentile confidence level.}"}
+knitr::include_graphics("img/300dpi/Fig_MCB_all(review).png")
 ```
 
 The Figure \ref{fig:MCB_ML} shows the result of MCB test conducted to examine the difference between the performance of ML algorithms. The results shows that there is a statistically significant difference between the performance RF and all other models. According to the MCB test, AD approach generated the most inaccurate forecasts and therefore drastically underperformed compared to the others. All other ML models have much better performance, and the RF comes out as the ultimate winner in terms of mean rank classification accuracy on the test data set.
