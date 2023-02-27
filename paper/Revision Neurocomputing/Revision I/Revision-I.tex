@@ -1513,7 +1513,46 @@ would prove to be useful:
   employed.
 \end{itemize}
 
-\renewcommand\refname{References}
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{appendix}{%
+\section*{Appendix}\label{appendix}}
+\addcontentsline{toc}{section}{Appendix}
+
+\begin{table}[!h]
+
+\caption{\label{tab:modelSetup}The main setup information for the ML models}
+\centering
+\fontsize{11}{13}\selectfont
+\begin{tabular}[t]{lllllll}
+\toprule
+ML model & R package & Computation time & Feature enginering & Activation formula & Optimization algorithm & Main assumptions and limitations\\
+\midrule
+LR & stats & \textasciitilde{}3 minutes & NO & glm(marks\textasciitilde{}.,family = binomial, data=train.data) & maximum likelihood estimation & linear relationship between the response and the predictor variables\\
+LDA & MASS & \textasciitilde{}3 minutes & NO & lda(marks\textasciitilde{}., data=train.data) & singular value decomposition & normally distributed data and equal covariance class matrices\\
+QDA & MASS & \textasciitilde{}3 minutes & NO & qda(marks\textasciitilde{}., data=train.data) & maximum likelihood estimation & normally distributed data\\
+KNN & class & \textasciitilde{}20 minutes & YES & knn(Xlag[train,], Xlag[-train,], ClassTable[train,"marks"], k=3) & grid search & sensitive to the choice of the hyperparameter k\\
+LASSO & glmnet & \textasciitilde{}10 minutes & NO & cv.glmnet(x, y, family="binomial", type.measure="auc") & coordinate descent method & linear relationship between the response and the predictor variables\\
+GAM & gam & \textasciitilde{}12 minutes & NO & gam(marks\textasciitilde{}. + s(trend, df=3) + s(seas\_acf1, df = 3) + s(linearity, df = 3) + s(entropy, df = 3) + s(x\_acf1, df = 3) + s(seasonal\_strength, df = 3) + s(seas\_acf1, df = 3), family = binomial, data = train.data) & penalized regression maximum likelihood estimation & additive relationship between the predictor variables and the response variable\\
+RF & randomForest & \textasciitilde{}2200 minutes & NO & randomForest(marks\textasciitilde{}., data=train.data1, mtry=10, ntree=3000, importance = TRUE) & bootstrap aggregation & parsimony, overfitting, interpretability and long computation time\\
+Boosting & gbm & \textasciitilde{}3000 minutes & YES & gbm(marks\textasciitilde{}., data = train.data01, distribution = "bernoulli", n.trees = 4500, shrinkage = 0.01, interaction.depth = 10) & gradient boosting & parsimony, overfitting, interpretability and long computation time\\
+SVM & e1071 & \textasciitilde{}6000 minutes & YES & tune(e1071::svm, as.factor(marks)\textasciitilde{}., data = train.data, scale = FALSE, kernel = "radial", ranges = list(cost=c(0.001 , 0.01, 0.1, 1, 5, 10, 100), gamma=c(0.5, 1, 2, 3, 4))) & Lagrange multipliers for constrained optimization problem & interpretability, sensitivity to kernel choice, assumes that the classes can be separated by a linear boundary or a hyperplane in high-dimensional space, long computation time\\
+FNN & nnet & \textasciitilde{}10 minutes & YES & nnet(marks\textasciitilde{}., data=train.data, size=10, maxit=500, decay=0.001, rang = 0.1) & resilient backpropagation algorithm & interpretability, limited flexibility, choice of hyperparameters and overfitting\\
+DTW & dtw & \textasciitilde{}5 minutes & YES & knn(train = trainData[, -5], test = testData[, -5], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE, distance = dtw.dist) & dynamic programming algorithm & interpretability, computational complexity, sensitivity to noise and choice of warping function\\
+DL Torch & torch & \textasciitilde{}180 minutes & YES & nn\_module(  "Net",  initialize = function() \{  self\$fc1 <- nn\_linear(length(features1), 40),  self\$fc2 <- nn\_linear(40, 30),  self\$fc3 <- nn\_linear(30, 30), self\$fc4 <- nn\_linear(30, 15),  self\$fc5 <- nn\_linear(15, 15),  self\$fc6 <- nn\_linear(15, 10), self\$fc7 <- nn\_linear(10, 10),  self\$fc8 <- nn\_linear(10, 5),  self\$fc9 <- nn\_linear(5, 5),  self\$fc10 <- nn\_linear(5, 1) \},
+  forward = function(x) \{  x \%>\% 
+      self\$fc1() \%>\%  nnf\_relu() \%>\%  self\$fc2() \%>\% nnf\_relu() \%>\% self\$fc3() \%>\%  nnf\_relu() \%>\% self\$fc4() \%>\% nnf\_relu() \%>\% self\$fc5() \%>\% nnf\_relu() \%>\% self\$fc6() \%>\%      nnf\_relu() \%>\%  self\$fc7() \%>\%  nnf\_relu() \%>\%  self\$fc8() \%>\%  nnf\_relu() \%>\% self\$fc9() \%>\%  nnf\_relu() \%>\% self\$fc10() \}) & adaptive moment estimation & interpretability, computational complexity, choice of hyperparameters, overfitting and long computation time\\
+XG Boost & xgboost & \textasciitilde{}300 minutes & YES & xgboost(data = xgboost\_train, max.depth=23, nrounds=500, objective = "binary:logistic") & gradient boosting with decision trees & interpretability, computational complexity, choice of hyperparameters, overfitting and long computation time\\
+TensorFlow & tensorflow, keras & \textasciitilde{}30 minutes & YES & keras\_model\_sequential() \%>\% layer\_dense(units = 80, activation = "relu", input\_shape = c(42)) \%>\%  layer\_dropout(rate = 0.6) \%>\%  layer\_dense(units = 40, activation = "relu") \%>\%  layer\_dropout(rate = 0.3) \%>\%  layer\_dense(units = 5, activation = "relu") \%>\%   layer\_dense(units = 1, activation = "sigmoid") & root mean square propagation & interpretability, computational complexity, choice of hyperparameters and overfitting\\
+RNN & keras & \textasciitilde{}30 minutes & YES & keras\_model\_sequential() \%>\%  layer\_lstm(units = 64, input\_shape = c(42, 1)) \%>\%  layer\_dropout(rate = 0.2) \%>\%  layer\_dense(units = 1, activation = "sigmoid") & adaptive moment estimation & temporal dependence between the input and output variables, interpretability, computational complexity, choice of hyperparameters and overfitting\\
+CNN & keras & \textasciitilde{}35 minutes & YES & keras\_model\_sequential() \%>\%  layer\_conv\_1d(filters = 32, kernel\_size = 3, activation = "relu", input\_shape = c(42, 1)) \%>\%  layer\_max\_pooling\_1d(pool\_size = 2) \%>\%
+layer\_dropout(rate = 0.2) \%>\%  layer\_flatten() \%>\%  layer\_dense(units = 1, activation = "sigmoid") & adaptive moment estimation & spatial dependence between the input and output variables, interpretability, computational complexity, choice of hyperparameters and overfitting\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \bibliography{mybibfile.bib}
 
 

@@ -628,3 +628,10 @@ Given the findings of this study and the potential value of temporal aggregation
 - A further study could investigate the link between time series features and forecast accuracy when forecasts are required at the original higher frequency, hence a disaggregation approach should be employed.
 
 # References {#references .unnumbered}
+
+# Appendix {.unnumbered}
+
+```{r modelSetup}
+setup <- readr::read_csv("modelSetup.csv")
+knitr::kable(setup, booktabs = T, linesep = "",caption = "The main setup information for the ML models") %>% kableExtra::kable_styling(latex_options = c("hold_position"), font_size =11)
+```
