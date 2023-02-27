@@ -1,14 +1,14 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.24)  27 FEB 2023 15:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.27)  27 FEB 2023 16:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Revision-I.tex
 (./Revision-I.tex
 LaTeX2e <2022-11-01> patch level 1
-L3 programming layer <2023-02-07> (./elsarticle.cls
+L3 programming layer <2023-02-22> (./elsarticle.cls
 Document Class: elsarticle 2020/11/20, 3.3: Elsevier Ltd
 (c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2023-02-07 L3 programming layer (loader) 
+Package: expl3 2023-02-22 L3 programming layer (loader) 
 (c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count185
@@ -842,41 +842,41 @@ Overfull \hbox (8.69446pt too wide) in paragraph at lines 1115--1115
 []|\T1/lmr/bx/n/10 Predicted|  
  []
 
-<img/300dpi/utility.png, id=444, 1659.19875pt x 1065.9825pt>
+<img/300dpi/utility.png, id=444, 511.9125pt x 369.7815pt>
 File: img/300dpi/utility.png Graphic file (type png)
 <use img/300dpi/utility.png>
 Package pdftex.def Info: img/300dpi/utility.png  used on input line 1135.
-(pdftex.def)             Requested size: 280.80286pt x 180.40135pt.
+(pdftex.def)             Requested size: 280.80286pt x 202.83878pt.
 [18
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1164 
+l.1155 
        
 pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1164 
+l.1155 
         <./img/300dpi/utility.png>]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 1194.
 [19]
-<img/300dpi/Fig_persp.png, id=487, 575.5101pt x 614.0541pt>
+<img/300dpi/Fig_persp.png, id=486, 575.5101pt x 614.0541pt>
 File: img/300dpi/Fig_persp.png Graphic file (type png)
 <use img/300dpi/Fig_persp.png>
 Package pdftex.def Info: img/300dpi/Fig_persp.png  used on input line 1253.
 (pdftex.def)             Requested size: 327.59857pt x 349.5366pt.
-<img/300dpi/Fig_tree_depth_and_ntrees.png, id=492, 853.5087pt x 569.0058pt>
-File: img/300dpi/Fig_tree_depth_and_ntrees.png Graphic file (type png)
-<use img/300dpi/Fig_tree_depth_and_ntrees.png>
-Package pdftex.def Info: img/300dpi/Fig_tree_depth_and_ntrees.png  used on input line 1278.
-(pdftex.def)             Requested size: 421.19714pt x 280.79485pt.
 [20
 pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1284 
+l.1275 
         <./img/300dpi/Fig_persp.png>]
-<img/300dpi/Fig_importance.png, id=501, 853.5087pt x 426.6339pt>
+<img/300dpi/Fig_tree_depth_and_ntrees.png, id=497, 853.5087pt x 569.0058pt>
+File: img/300dpi/Fig_tree_depth_and_ntrees.png Graphic file (type png)
+<use img/300dpi/Fig_tree_depth_and_ntrees.png>
+Package pdftex.def Info: img/300dpi/Fig_tree_depth_and_ntrees.png  used on input line 1278.
+(pdftex.def)             Requested size: 421.19714pt x 280.79485pt.
+<img/300dpi/Fig_importance.png, id=500, 853.5087pt x 426.6339pt>
 File: img/300dpi/Fig_importance.png Graphic file (type png)
 <use img/300dpi/Fig_importance.png>
 Package pdftex.def Info: img/300dpi/Fig_importance.png  used on input line 1299.
@@ -887,7 +887,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) ha
                                                   \__shipout_drop_firstpage_...
 l.1305 
         <./img/300dpi/Fig_tree_depth_and_ntrees.png>]
-<img/300dpi/pfinal.png, id=510, 2370.8575pt x 2370.8575pt>
+<img/300dpi/pfinal.png, id=509, 2370.8575pt x 2370.8575pt>
 File: img/300dpi/pfinal.png Graphic file (type png)
 <use img/300dpi/pfinal.png>
 Package pdftex.def Info: img/300dpi/pfinal.png  used on input line 1328.
@@ -898,7 +898,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.14}) ha
                                                   \__shipout_drop_firstpage_...
 l.1334 
         <./img/300dpi/Fig_importance.png>]
-<img/300dpi/pfinal1.png, id=517, 2370.8575pt x 2844.6275pt>
+<img/300dpi/pfinal1.png, id=516, 2370.8575pt x 2844.6275pt>
 File: img/300dpi/pfinal1.png Graphic file (type png)
 <use img/300dpi/pfinal1.png>
 Package pdftex.def Info: img/300dpi/pfinal1.png  used on input line 1337.
@@ -928,17 +928,17 @@ Package rerunfilecheck Info: File `Revision-I.out' has not changed.
 (rerunfilecheck)             Checksum: 68D74BC725C7E579BDA9924D51D579EB;3884.
  ) 
 Here is how much of TeX's memory you used:
- 15144 strings out of 477989
- 246133 string characters out of 5837889
- 1879340 words of memory out of 5000000
- 34870 multiletter control sequences out of 15000+600000
+ 15144 strings out of 477984
+ 246133 string characters out of 5837741
+ 1879382 words of memory out of 5000000
+ 34875 multiletter control sequences out of 15000+600000
  582893 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,11n,76p,622b,617s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb><c:/Users/Dejan/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on Revision-I.pdf (28 pages, 2836887 bytes).
+Output written on Revision-I.pdf (28 pages, 2869650 bytes).
 PDF statistics:
- 681 PDF objects out of 1000 (max. 8388607)
+ 680 PDF objects out of 1000 (max. 8388607)
  573 compressed objects within 6 object streams
  151 named destinations out of 1000 (max. 500000)
  225 words of extra memory for PDF output out of 10000 (max. 10000000)

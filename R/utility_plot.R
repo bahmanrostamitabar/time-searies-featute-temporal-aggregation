@@ -30,8 +30,8 @@ utility_plot <- table_fig[1:18,] %>%
 utility_plot
 
 ggsave(filename="utility.png",utility_plot,
-       width = 14,
-       height = 9,
+       width = 18,
+       height = 13,
        dpi = 300, units="cm")
   
 CB <- table_CB[,-c(1:3)]
