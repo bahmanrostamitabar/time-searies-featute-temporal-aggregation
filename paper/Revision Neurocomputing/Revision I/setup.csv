@@ -1,0 +1,17 @@
+ML model,R package,input features ,standardized variables (mean = 0 and standard deviation = 1),Statistically significant features or optimal number of parameters,Optimization algorithm,Main assumptions and limitations
+LR,,42,NO,24,maximum likelihood estimation,linear relationship between the response and the predictor variables
+LDA,,42,NO,/,singular value decomposition,normally distributed data and equal covariance class matrices
+QDA,,42,NO,/,maximum likelihood estimation,normally distributed data
+KNN,,41,YES,K=3,grid search,/
+LASSO,,42,NO,35,coordinate descent method,linear relationship between the response and the predictor variables
+GAM,,42 + 6 splines with 3 degrees of freedom,NO,22,penalized regression maximum likelihood estimation,additive relationship between the predictor variables and the response variable
+RF,,42,NO,"number of trees = 3000, number of features = 10",bootstrap aggregation,"parsimony, overfitting and interpretability"
+Boosting,,42,YES,"number of trees = 4500, shrinkage=0.01, interaction depth=10",gradient boosting,"parsimony, overfitting and interpretability"
+SVM,,42,YES,"SVM-Kernel: radial, cost regularization term = 1",Lagrange multipliers for constrained optimization problem,"interpretability, sensitivity to kernel choice, assumes that the classes can be separated by a linear boundary or a hyperplane in high-dimensional space"
+FNN,,42,YES,"number of neurons hiden layer = 10, number of training iterations = 500, weight decay = 0.001, initial random weights = 0.1",resilient backpropagation algorithm,"interpretability, limited flexibility, choice of hyperparameters and overfitting"
+DTW,,41,YES,k = 5 (,dynamic programming algorithm,"interpretability, computational complexity, sensitivity to noise and choice of warping function"
+DL Torch,,42,YES,,adaptive moment estimation,"interpretability, computational complexity, choice of hyperparameters and overfitting"
+XG Boost,,42,YES,,gradient boosting with decision trees,"interpretability, computational complexity, choice of hyperparameters and overfitting"
+TensorFlow,,42,YES,,root mean square propagation,"interpretability, computational complexity, choice of hyperparameters and overfitting"
+RNN,,42,YES,,adaptive moment estimation,"temporal dependence between the input and output variables, interpretability, computational complexity, choice of hyperparameters and overfitting"
+CNN,,42,YES,,adaptive moment estimation,"spatial dependence between the input and output variables, interpretability, computational complexity, choice of hyperparameters and overfitting"
