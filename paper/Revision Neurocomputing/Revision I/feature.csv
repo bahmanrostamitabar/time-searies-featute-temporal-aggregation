@@ -1,19 +1,19 @@
 Feature,Description
-mean,mean 
-var,Varince
-cv,Coeifficnet of variation
+mean,Mean 
+var,Variance
+cv,Coefficient of variation
 trend,"Strength of trend, a value close to 1 indicate highly trended series"
-seasonal_strength,"strength of seasonality, a value close to 1 indicate highly seaonal series"
+seasonal_strength,"Strength of seasonality, a value close to 1 indicate highly seaonal series"
 entropy,Measure of how easy the series is to forecast. Entropy close to 0 shows a series  is easy to forecast
 lumpiness,Lumpiness is the variance of the variances of  tiled (non-overlapping) windows
 flat_spots,Number of sections of the data where the series is relatively unchanging
 crossing_points,Number of times a time series crosses the median
 nonlinearity,"Extent of nonlinearity, if values around 0  series is linear. Large values shows nonlinearity "
 stability,Stability is the variance of the means of  tiled (non-overlapping) windows
-hurst,Hurst coefficient of a time series which is a measure of ong memory
+hurst,Hurst coefficient of a time series which is a measure of long memory
 spike,Prevalence of spikes in the remainder component  of the STL decomposition
 linearity,Linearity of the trend component of the STL decomposition
-curvature,Curvature of the trend component of the STL decompositio
+curvature,Curvature of the trend component of the STL decomposition
 peak,Timing of the peaks
 trough,Timing of the troughs
 x_acf1,First autocorrelation coefficient
