@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.27)  27 FEB 2023 23:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.27)  27 FEB 2023 23:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -764,17 +764,17 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has
                                                   \__shipout_drop_firstpage_...
 l.231 
        <./img/300dpi/nota.png>] [3] [4] [5]
-<img/300dpi/experiment_design.pdf, id=261, 523.9575pt x 536.0025pt>
-File: img/300dpi/experiment_design.pdf Graphic file (type pdf)
-<use img/300dpi/experiment_design.pdf>
-Package pdftex.def Info: img/300dpi/experiment_design.pdf  used on input line 455.
-(pdftex.def)             Requested size: 327.59857pt x 335.13977pt.
+<img/300dpi/experiment_design.png, id=261, 738.76pt x 794.97pt>
+File: img/300dpi/experiment_design.png Graphic file (type png)
+<use img/300dpi/experiment_design.png>
+Package pdftex.def Info: img/300dpi/experiment_design.png  used on input line 455.
+(pdftex.def)             Requested size: 327.59857pt x 352.51718pt.
 [6] [7
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.498 ...asting method}\label{forecasting-method}}
-                                                   <./img/300dpi/experiment_design.pdf>] [8]
+l.496 
+       <./img/300dpi/experiment_design.png>] [8]
 LaTeX Font Info:    Calculating math sizes for size <11> on input line 656.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <11> on input line 656.
@@ -789,15 +789,15 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.714 
+l.689 
       ]
-<img/300dpi/featurets_selection1.png, id=348, 455.0601pt x 569.0058pt>
+<img/300dpi/featurets_selection1.png, id=336, 455.0601pt x 569.0058pt>
 File: img/300dpi/featurets_selection1.png Graphic file (type png)
 <use img/300dpi/featurets_selection1.png>
 Package pdftex.def Info: img/300dpi/featurets_selection1.png  used on input line 721.
 (pdftex.def)             Requested size: 327.59857pt x 409.64914pt.
 [11]
-<img/300dpi/featurets_selection2.png, id=353, 455.0601pt x 569.0058pt>
+<img/300dpi/featurets_selection2.png, id=341, 455.0601pt x 569.0058pt>
 File: img/300dpi/featurets_selection2.png Graphic file (type png)
 <use img/300dpi/featurets_selection2.png>
 Package pdftex.def Info: img/300dpi/featurets_selection2.png  used on input line 730.
@@ -812,10 +812,10 @@ LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 75
 (/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<img/mp_category_all1.pdf, id=360, 542.025pt x 758.835pt>
-File: img/mp_category_all1.pdf Graphic file (type pdf)
-<use img/mp_category_all1.pdf>
-Package pdftex.def Info: img/mp_category_all1.pdf  used on input line 773.
+<img/300dpi/mp_category_all1.png, id=348, 542.025pt x 758.835pt>
+File: img/300dpi/mp_category_all1.png Graphic file (type png)
+<use img/300dpi/mp_category_all1.png>
+Package pdftex.def Info: img/300dpi/mp_category_all1.png  used on input line 773.
 (pdftex.def)             Requested size: 327.59857pt x 458.65082pt.
 [13
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
@@ -827,24 +827,24 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.798 
-       <./img/mp_category_all1.pdf>]
-<img/mp_category_all2.pdf, id=380, 542.025pt x 758.835pt>
-File: img/mp_category_all2.pdf Graphic file (type pdf)
-<use img/mp_category_all2.pdf>
-Package pdftex.def Info: img/mp_category_all2.pdf  used on input line 801.
+       <./img/300dpi/mp_category_all1.png>]
+<img/300dpi/mp_category_all2.png, id=363, 542.025pt x 758.835pt>
+File: img/300dpi/mp_category_all2.png Graphic file (type png)
+<use img/300dpi/mp_category_all2.png>
+Package pdftex.def Info: img/300dpi/mp_category_all2.png  used on input line 801.
 (pdftex.def)             Requested size: 327.59857pt x 458.65082pt.
 [15
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.824 
-       <./img/mp_category_all2.pdf>]
-<img/300dpi/box_plot_rmsse.png, id=393, 1303.87125pt x 829.0975pt>
+       <./img/300dpi/mp_category_all2.png>]
+<img/300dpi/box_plot_rmsse.png, id=371, 1303.87125pt x 829.0975pt>
 File: img/300dpi/box_plot_rmsse.png Graphic file (type png)
 <use img/300dpi/box_plot_rmsse.png>
 Package pdftex.def Info: img/300dpi/box_plot_rmsse.png  used on input line 846.
 (pdftex.def)             Requested size: 327.59857pt x 208.31125pt.
-<img/300dpi/Fig_MCB.png, id=399, 853.5087pt x 284.5029pt>
+<img/300dpi/Fig_MCB.png, id=377, 853.5087pt x 284.5029pt>
 File: img/300dpi/Fig_MCB.png Graphic file (type png)
 <use img/300dpi/Fig_MCB.png>
 Package pdftex.def Info: img/300dpi/Fig_MCB.png  used on input line 868.
@@ -855,7 +855,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has
                                                   \__shipout_drop_firstpage_...
 l.874 
        <./img/300dpi/box_plot_rmsse.png>]
-<img/300dpi/pair_plot.png, id=413, 853.1875pt x 710.655pt>
+<img/300dpi/pair_plot.png, id=391, 853.1875pt x 710.655pt>
 File: img/300dpi/pair_plot.png Graphic file (type png)
 <use img/300dpi/pair_plot.png>
 Package pdftex.def Info: img/300dpi/pair_plot.png  used on input line 924.
@@ -871,7 +871,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has
                                                   \__shipout_drop_firstpage_...
 l.959 
        <./img/300dpi/pair_plot.png>]
-<img/300dpi/Fig_MCB_all(review).png, id=434, 853.5087pt x 426.6339pt>
+<img/300dpi/Fig_MCB_all(review).png, id=411, 853.5087pt x 426.6339pt>
 File: img/300dpi/Fig_MCB_all(review).png Graphic file (type png)
 <use img/300dpi/Fig_MCB_all(review).png>
 Package pdftex.def Info: img/300dpi/Fig_MCB_all(review).png  used on input line 1004.
@@ -891,7 +891,7 @@ Overfull \hbox (7.72055pt too wide) in paragraph at lines 1047--1047
 []|\T1/lmr/bx/n/10 (-20) Predicted|  
  []
 
-<img/300dpi/utility.png, id=447, 511.9125pt x 369.7815pt>
+<img/300dpi/utility.png, id=424, 511.9125pt x 369.7815pt>
 File: img/300dpi/utility.png Graphic file (type png)
 <use img/300dpi/utility.png>
 Package pdftex.def Info: img/300dpi/utility.png  used on input line 1064.
@@ -909,12 +909,12 @@ l.1102
         <./img/300dpi/utility.png>]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 1110.
 [21]
-<img/300dpi/Fig_persp.png, id=481, 575.5101pt x 614.0541pt>
+<img/300dpi/Fig_persp.png, id=459, 575.5101pt x 614.0541pt>
 File: img/300dpi/Fig_persp.png Graphic file (type png)
 <use img/300dpi/Fig_persp.png>
 Package pdftex.def Info: img/300dpi/Fig_persp.png  used on input line 1169.
 (pdftex.def)             Requested size: 327.59857pt x 349.5366pt.
-<img/300dpi/Fig_tree_depth_and_ntrees.png, id=486, 853.5087pt x 569.0058pt>
+<img/300dpi/Fig_tree_depth_and_ntrees.png, id=464, 853.5087pt x 569.0058pt>
 File: img/300dpi/Fig_tree_depth_and_ntrees.png Graphic file (type png)
 <use img/300dpi/Fig_tree_depth_and_ntrees.png>
 Package pdftex.def Info: img/300dpi/Fig_tree_depth_and_ntrees.png  used on input line 1193.
@@ -925,7 +925,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) ha
                                                   \__shipout_drop_firstpage_...
 l.1199 
         <./img/300dpi/Fig_persp.png>]
-<img/300dpi/Fig_importance.png, id=495, 853.5087pt x 426.6339pt>
+<img/300dpi/Fig_importance.png, id=473, 853.5087pt x 426.6339pt>
 File: img/300dpi/Fig_importance.png Graphic file (type png)
 <use img/300dpi/Fig_importance.png>
 Package pdftex.def Info: img/300dpi/Fig_importance.png  used on input line 1214.
@@ -936,33 +936,33 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) ha
                                                   \__shipout_drop_firstpage_...
 l.1220 
         <./img/300dpi/Fig_tree_depth_and_ntrees.png>]
-<img/300dpi/partial_dependence1.pdf, id=504, 568.1225pt x 568.1225pt>
-File: img/300dpi/partial_dependence1.pdf Graphic file (type pdf)
-<use img/300dpi/partial_dependence1.pdf>
-Package pdftex.def Info: img/300dpi/partial_dependence1.pdf  used on input line 1243.
-(pdftex.def)             Requested size: 468.0pt x 468.02199pt.
+<img/300dpi/partial_dependence1.png, id=482, 569.0058pt x 569.0058pt>
+File: img/300dpi/partial_dependence1.png Graphic file (type png)
+<use img/300dpi/partial_dependence1.png>
+Package pdftex.def Info: img/300dpi/partial_dependence1.png  used on input line 1243.
+(pdftex.def)             Requested size: 468.0pt x 468.00299pt.
 [24
 pdfTeX warning (ext4): destination with the same identifier (name{figure.14}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.1249 
         <./img/300dpi/Fig_importance.png>]
-<img/300dpi/partial_dependence2.pdf, id=511, 568.1225pt x 682.55pt>
-File: img/300dpi/partial_dependence2.pdf Graphic file (type pdf)
-<use img/300dpi/partial_dependence2.pdf>
-Package pdftex.def Info: img/300dpi/partial_dependence2.pdf  used on input line 1252.
-(pdftex.def)             Requested size: 468.0pt x 562.28793pt.
+<img/300dpi/partial_dependence2.png, id=489, 569.0058pt x 682.7106pt>
+File: img/300dpi/partial_dependence2.png Graphic file (type png)
+<use img/300dpi/partial_dependence2.png>
+Package pdftex.def Info: img/300dpi/partial_dependence2.png  used on input line 1252.
+(pdftex.def)             Requested size: 468.0pt x 561.52434pt.
 [25
 pdfTeX warning (ext4): destination with the same identifier (name{figure.15}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.1258 
-        <./img/300dpi/partial_dependence1.pdf>] [26
+        <./img/300dpi/partial_dependence1.png>] [26
 pdfTeX warning (ext4): destination with the same identifier (name{figure.16}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.1263 T
-        he plots illustrate the marginal effect of the selected features on the <./img/300dpi/partial_dependence2.pdf>] [27] [28] [29]
+        he plots illustrate the marginal effect of the selected features on the <./img/300dpi/partial_dependence2.png>] [27] [28] [29]
 Overfull \hbox (2.42955pt too wide) in paragraph at lines 1453--1453
 []|\T1/lmr/m/n/8 (-20) Running 
  []
@@ -996,18 +996,18 @@ Package rerunfilecheck Info: File `Revision-I.out' has not changed.
 (rerunfilecheck)             Checksum: D4D74402F95D8602FF9F4FC3FAE6970F;3891.
  ) 
 Here is how much of TeX's memory you used:
- 17119 strings out of 477984
- 283300 string characters out of 5837413
+ 17128 strings out of 477984
+ 283672 string characters out of 5837413
  1887388 words of memory out of 5000000
- 36612 multiletter control sequences out of 15000+600000
+ 36622 multiletter control sequences out of 15000+600000
  592483 words of font info for 193 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,12n,76p,1724b,665s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}</Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb></Users/bahmanrostami-tabar/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on Revision-I.pdf (32 pages, 7349586 bytes).
+Output written on Revision-I.pdf (32 pages, 5106843 bytes).
 PDF statistics:
- 708 PDF objects out of 1000 (max. 8388607)
- 597 compressed objects within 6 object streams
+ 672 PDF objects out of 1000 (max. 8388607)
+ 566 compressed objects within 6 object streams
  155 named destinations out of 1000 (max. 500000)
  42209 words of extra memory for PDF output out of 42996 (max. 10000000)
 
