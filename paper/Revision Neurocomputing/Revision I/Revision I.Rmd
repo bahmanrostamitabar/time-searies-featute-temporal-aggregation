@@ -537,10 +537,11 @@ R code and RMarkdown file to produce all results in this paper are available at 
 
 ```{r modelSetup}
 setup <- readr::read_csv("modelSetup.csv")
-knitr::kable(setup, booktabs = T, linesep = "",caption = "The main setup information for ML models") %>% kableExtra::kable_styling(latex_options = c("scale_down","hold_position"), font_size =8) |> 
-  column_spec(1,"1cm") %>% column_spec(2,"2cm")  %>%
+setup <- setup[,1:5]
+knitr::kable(setup, booktabs = T, linesep = "",caption = "The main setup information for ML models") %>% kableExtra::kable_styling(latex_options = c("scale_down","hold_position"), font_size =7) |> 
+  column_spec(1,"1cm") %>% column_spec(2,"1cm")  %>%
   column_spec(3,"1cm") %>% column_spec(4,"1cm")  %>%
-  column_spec(5,"6cm") %>% column_spec(6,"3cm")  %>% column_spec(7,"3cm") |> kableExtra::landscape()
+  column_spec(5,"13cm") %>% kableExtra::landscape()
 
 ```
 
