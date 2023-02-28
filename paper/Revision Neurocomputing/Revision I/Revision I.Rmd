@@ -1,5 +1,5 @@
 ---
-title: On time series features and forecasting by temporal aggregation
+title: Exploring the association between time series features and forecasting by temporal aggregation using machine learning
 header-includes:
   - \usepackage{float}
   - \floatplacement{figure}{!htb}

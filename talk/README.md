@@ -1,1 +1,0 @@
-## Democratising forecasting project 
