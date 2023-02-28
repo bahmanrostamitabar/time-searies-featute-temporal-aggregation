@@ -110,42 +110,39 @@ of Serbia, Fruskogorska 1, 21000 Novi Sad}
     \fntext[1]{Equal contribution}
   
   \begin{abstract}
-  When a forecast of the total value over a number of time periods ahead
-  is required, forecasters are presented with two temporal aggregation
-  (TA) approaches approaches to produce required forecasts: i)
-  aggregated forecast (AF) or ii) aggregate data using non-overlapping
-  temporal aggregation (AD). Often, the recommendation is to aggregate
-  data to a frequency relevant to the decision the eventual forecasts
-  will support and then produce the forecast. However, this might not be
-  always the best choice and we argue that both AF and AD approaches may
-  outperform each other in different situations. Moreover, there is a
-  lack of evidence on what indicators may determine the superirity of
-  each approach. We design and execute an empirical experiment framework
-  to first explore the performance of these approaches using monthly
-  time series of M4 competition dataset. We further turn the problem
-  into a classification supervised learning and build a machine learning
-  algorithm to investigate the connection between time series features
-  and the performance of temporal aggregation. This is the first study
-  in time series forecasting that explores the association between time
-  series features and temporal aggreagtion performance. Our findings
-  suggest that neither AF or AD approaches perform accurately for each
-  individual series. AF is shown to be significantly better than AD for
-  the monthly M4 time series, especially for longer horizons. We build
-  several machine learning approaches using a set of extracted time
-  series features as input to predict accurately whether AD or AF
-  oshould be used. We find out Random Forest (RF) is the most accurate
-  approach in correctly classifying the oucome examined both by
-  staitical measures such as missclassification error, F-statistics, and
-  area under the curve and a utility measure. The RF approach reveals
-  that curvature, nonlinearity, seas\_pacf, unitroot\_up, mean,
-  ARCHM.LM, Coifficient of Variation, stability, linearity and
-  max\_level\_shif are among the most important features in driving the
-  predictions of the model. Our findings indicate that the strength of
-  trend, ARCH.LM, hurst, autocorrelation lag 1 and unitroot\_pp and
-  seas\_pacf may favor AF approach, while lumpiness, entropy,
-  nonlinearity, curvature, stremgth of seasonality may increase the
-  chance of AD performing better. We conclude the study by sumamrising
-  the finding and present an agenda for further research.
+  When a forecast of the total value over several time periods ahead is
+  required, forecasters are presented with two temporal aggregation (TA)
+  approaches to produce required forecasts: i) aggregated forecast (AF)
+  or ii) aggregate data using non-overlapping temporal aggregation (AD).
+  Often, the recommendation is to aggregate data to a frequency relevant
+  to the decision the eventual forecasts will support and then produce
+  the forecast. However, this might not be always the best choice and we
+  argue that both AF and AD approaches may outperform each other in
+  different situations. Moreover, there is a lack of evidence on what
+  indicators may determine the superiority of each approach. We design
+  and execute an empirical experiment framework to first explore the
+  performance of these approaches using monthly time series of M4
+  competition dataset. We further turn the problem into a classification
+  supervised learning and build machine learning algorithms to
+  investigate the association between time series features and the
+  performance of temporal aggregation. Our findings suggest that neither
+  AF nor AD approaches perform accurately for each individual series. AF
+  is shown to be significantly better than AD for the monthly M4 time
+  series, especially for longer horizons. We build several machine
+  learning approaches using a set of extracted time series features as
+  input to predict accurately whether AD or AF should be used. We find
+  out that Random Forest (RF) is the most accurate approach in correctly
+  classifying the outcome assessed both by statistical measures such as
+  misclassification error, F-statistics, and area under the curve and a
+  utility measure. The RF approach reveals that curvature, nonlinearity,
+  seas\_pacf, unitroot\_pp, mean, ARCHM.LM, Coefficient of Variation,
+  stability, linearity and max\_level\_shif are among the most important
+  features in driving the predictions of the model. Our findings
+  indicate that the strength of trend, ARCH.LM, hurst, autocorrelation
+  lag 1 and unitroot\_pp and seas\_pacf may favour AF approach, while
+  lumpiness, entropy, nonlinearity, curvature, strength of seasonality
+  may increase the chance of AD performing better. We conclude the study
+  by summarising the finding and present an agenda for further research.
   \end{abstract}
     \begin{keyword}
     Temporal Aggregation \sep Forecasting \sep Time Series
@@ -186,12 +183,12 @@ decisions made in the light of forecasts. In this paper, we consider a
 situation where an original time series has a higher temporal
 granularity (e.g.~monthly) than the required forecast (e.g.~annual). We
 aim to generate a forecast of the total value over several time periods
-ahead, which is referred to as forecast horizon aggregation or forecast
-over the lead-time period \citep{mohammadipour2012forecast}. Therefore,
-the lead-time period matches the aggregation level required to aggregate
-the time series.
+ahead, which is referred to as forecast horizon aggregation
+\citep{mohammadipour2012forecast} or forecast over the lead-time period
+\citep{rostami2023forecasting}. Therefore, the lead-time period matches
+the aggregation level.
 
-Producing an aggregated forecast over a number of periods is required in
+Producing an aggregated forecast over several periods is required in
 many situations to inform decisions about capacity planning, inventory
 management, logistics, procurement, and others
 \citep{nikolopoulos2011aggregate, zotteri2007model}. For example,
@@ -244,7 +241,7 @@ data approaches may outperform each other. Their performance may depend
 on the presence of the autocorrelation in the original series,
 aggregation level, forecast horizon and the employed forecasting method
 (see, e.g.,
-\citet{boylan2016performance};\citet{rostami2021aggregate};\citet{rostami2014note};\citet{nikolopoulos2011aggregate}).
+\citet{boylan2016performance};\citet{rostami2022aggregate};\citet{rostami2014note};\citet{nikolopoulos2011aggregate}).
 We should note that this study only applies to the case of a single
 level of aggregation, we can extend this study to examine the case of
 using multiple level of aggregation, temporal hierarchies or
@@ -258,13 +255,13 @@ been emphasised by @babai2022demand in a review article. This study contributes 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  \textcolor{blue}{We measure 42 features of the time series at the original level (e.g. monthly) and at various levels of temporal aggregation (e.g. quarterly, annual) using the monthly M4 competition.}
+  \textcolor{blue}{We measure 42 features of the time series at the original level (e.g. monthly), and at various levels of temporal aggregation (e.g. quarterly, annual) using the monthly M4 competition dataset.}
 \item
   \textcolor{blue}{We reveal how time series features change as we aggregate data from high frequency (e.g. monthly) to low frequency (e.g. annual).}
 \item
   \textcolor{blue}{We assess the forecast accuracy performance of AD and AF approaches for the forecasts generated by the the Exponential Smoothing State Space (ETS) model.}
 \item
-  \textcolor{blue}{We build machine learning models using time series features as predictors to accurately predict which approach (AD or AF) performs better.}
+  \textcolor{blue}{We build machine learning models using time series features as predictors to accurately predict which approach (i.e. AD or AF) performs better.}
 \item
   \textcolor{blue}{We examine the association between time series features and the forecasting performance of these approaches.}
 \end{enumerate}
@@ -292,8 +289,7 @@ granularity. When the time series is available at a higher level of
 granularity (e.g.~hourly), it is often expected to generate a forecast
 at a lower granularity level (e.g.~daily) over several time periods.
 Therefore, a forecast of the total value over several time periods ahead
-(i.e.~lead-time or aggregation level) is required
-\citep{mohammadipour2012forecast}. In these situations, an obvious
+(i.e.~aggregation level) is required. In these situations, an obvious
 option, that is often recommended in practice \citep{goodwin2018profit},
 would be to first transform the higher granularity time series into the
 lower granularity that matches the forecast requirement, and then
@@ -301,15 +297,15 @@ produce the forecast. The transformation is generally performed using
 non-overlapping temporal aggregation.
 
 Another approach is to aggregate forecast rather than data. In that
-case, we first produce forecasts using the higher granular time series
-for the forecast horizon (i.e.~multiple periods ahead) and then
+case, we first produce base forecasts using the higher granular time
+series for the forecast horizon (i.e.~multiple periods ahead) and then
 aggregate them.
 
 The application of NOTA approach in time series forecasting has been
 initially studied in the econometric literature. They evaluated how NOTA
 may change the structure of Autoregressive Integrated Moving Average
 (ARIMA) processes \citep{wei1978some, rossana1995temporal}. This
-literature is in favor of aggregate data using NOTA. They show that it
+literature is in favour of aggregate data using NOTA. They show that it
 leads to accuracy gains under the assumption of ARIMA process and using
 an optimal conditional mean forecast.
 
@@ -325,7 +321,7 @@ affecting the time series features, parameters of the forecasting
 method, and aggregation levels. They concluded that NOTA performs better
 when autocorrelation is not highly positive. In contrast, they show that
 high positive autocorrelation as one of the key features of time series,
-favorites AF approach. \citet{rostami2019impact} evaluated the impact of
+favours AF approach. \citet{rostami2019impact} evaluated the impact of
 NOTA on forecasting demand and orders in a supply chain. They assume
 that the demand time series follows an ARMA(1,1), the stock policy is
 order-up-to-level and optimal forecasting is used to produce forecasts.
@@ -358,7 +354,7 @@ moving time series.
 forecast versus aggregate data in an empirical study consisting of 366
 monthly series and various forecasting methods including state space
 models for exponential smoothing (ETS), ARIMA, and Theta. Their findings
-are in favor of aggregating forecasts. They found that aggregating
+are in favour of aggregating forecasts. They found that aggregating
 forecast from either monthly or quarterly to yearly leads to more
 forecast accuracy improvements than yearly forecasts generated from the
 NOTA yearly series. Using time series of order and point-of-sale in a
@@ -397,7 +393,7 @@ Although all approaches including AF, AD and using multiple TA levels
 have demonstrated forecasting gain, arguably none of them are suitable
 to be used in every situation. Almost all studies in the literature
 reports an overall accuracy (e.g.~average) rather than accuracy at the
-time series level). We argue that some time series features may favorite
+time series level. We argue that some time series features may favour
 using a particular approach over others. However, there is no study in
 the literature that investigates the potential association between time
 series features and temporal aggregation performance, which is the main
@@ -419,15 +415,15 @@ which are described as follows:
 \item
   \textcolor{blue}{The original monthly time series is transformed into temporally aggregated series for a given aggregation aggregation level, $m$.}
 \item
-  \textcolor{blue}{The ETS forecasting method is applied to the original series to generate forecast for $m$ periods.}
+  A set of features is extracted for the original and aggregated time
+  series.
 \item
-  \textcolor{blue}{Forecasts are generated using ETS model for temporally aggregated series (forecasts from AD).}
+  \textcolor{blue}{The ETS forecasting method is applied to the original series to generate forecast for $m$ periods.}
 \item
   Forecasts per each period are added up to obtain the forecast over the
   aggregated horizon (forecasts from AF).
 \item
-  Forecasts are generated for temporally aggregated series (forecasts
-  from AD).
+  \textcolor{blue}{Forecasts are generated using ETS model for temporally aggregated series (forecasts from AD).}
 \item
   Forecast accuracy is calculated for each series.
 \item
@@ -438,23 +434,23 @@ which are described as follows:
 \item
   Several machine learning (ML) models are built to accurately predict
   the superiority of AF/AD approaches using the data created in step 7.
-  \textcolor{blue}{These models include: 1) Logistic regression (LR), 2) Linear discriminant analysis (LDA), 3) Quadratic discriminant analysis (QDA), 4) K-Nearest Neighbors (KNN), 5) Lasso, 6) Generalised Additive Model (GAM), 7) Boosting, 8) Support Vector Machine (SVM), 9) Random Forest (RF), 10) Google Brain TensorFlow model (TensorFlow), 11) Facebook's Deep learning Torch model based on tensors \& neural networks (DL Torch), 12) extreme gradient boosting (XGBoost), 13) recurrent neural network (RNN), 14) convolution neural network (CNN), 15) feedforward neural network (FNN) and 16) Dynamic Time Warping (DTW).}
-  Researchers are referred to \citet{james2021statistical} for a detail
-  description of these approaches. Given the outperformance of the
-  random forest among all models used in this study, we will describe it
-  in more details in section \ref{ml}.
+  \textcolor{blue}{These models include: 1) Logistic regression (LR), 2) Linear discriminant analysis (LDA), 3) Quadratic discriminant analysis (QDA), 4) K-Nearest Neighbors (KNN), 5) Lasso, 6) Generalised Additive Model (GAM), 7) Boosting, 8) Support Vector Machine (SVM), 9) Random Forest (RF), 10) Google Brain TensorFlow model (TensorFlow), 11) Facebook's Deep learning Torch model based on tensors \& neural networks (DL Torch), 12) extreme gradient boosting (XGBoost), 13) recurrent neural network (RNN), 14) convolution neural network (CNN), 15) feedforward neural network (FNN) and 16) Dynamic Time Warping (DTW). Researchers are referred to}
+  \citet{james2021statistical} \textbackslash textcolor\{blue\}\{for a
+  detail description of some of these approaches.
 \end{enumerate}
 
-The model can help us to identify the most important time series
-features that lead to the outperformance of RF. Moreover, it can also
-reveal how time series features are connected to the performance of AD
-and AF.
+Given the outperformance of RF among all models used in this study, we
+will describe it in more details in section \ref{ml}.\} The model can
+help us to identify the most important time series features that lead to
+the outperformance of RF. Moreover, it can also reveal how time series
+features are connected to the performance of AD and AF.
 
 Due to the page restrictions, details regarding the initial set up,
 method of optimization and cost function of these algorithms are not
-presented in the paper, however they are available by request from the
-authors. The experiment has been conducted in R software, and the
-authors are willing to share the code for reproducibility.
+presented in the paper.
+\textcolor{blue}{We should note that we have conducted a comprehensive study and searched for optimal setups of each model rather than using automatic ML models. Additional information about the setup of models can be found in the Appendix or in the}
+\href{https://github.com/bahmanrostamitabar/time-searies-featute-temporal-aggregation}{GitHub
+repository}.
 
 \begin{figure}[H]
 
@@ -480,25 +476,26 @@ The first approach is to aggregate forecasts (AF).
 The main advantage of AF is that there is no loss of information from
 the data because initial base forecasts are generated at the lowest
 disaggregated level. AF approach can capture the dynamics of the high
-frequency series, however they may be noisy and difficult to model. In
+frequency series; however they may be noisy and difficult to model. In
 the case of stationary time series, the AF approach may produce a more
 accurate forecast when the autocorrelation of the underlying demand
 series is highly positive \citep{rostami2014note}. Conversely, there is
-an absence of researches in the case of non-stationary time series.
+an absence of research in the case of non-stationary time series.
 Therefore, this research is dealing with both stationary and
 non-stationary time series and provides insight into the perplexity of
-interactions between different factors that influence on AF approach.
+interactions between different factors that influence AF approach
+performance.
 
 The second approach is to aggregate data (AD). This approach consists of
 applying the non-overlapping temporal aggregation approach to the
 original series, using the time granularity level for which the
 forecasting is needed. Following that the process of forecasting the
-temporally aggregated series for one atep ahead is performed. Benefits
-of AD can be seen in the reduction of the noise in the data, as well as
-in revelling the more smooth patterns that exist in the series. The NOTA
-of the series usually sheds light on the key time series features, which
-are more notable and clearer as we perform the aggregation to the lower
-granularity levels (e.g.~quarterly, annual).
+temporally aggregated series for one \textcolor{blue}{step} ahead is
+performed. Benefits of AD can be seen in the reduction of the noise in
+the data, as well as in revealing the smoother patterns that exist in
+the series. The NOTA of the series usually sheds light on the key time
+series features, which are more notable and clearer as we perform the
+aggregation to the lower granularity levels (e.g.~quarterly, annual).
 
 \hypertarget{forecasting-method}{%
 \subsection{Forecasting method}\label{forecasting-method}}
@@ -510,7 +507,7 @@ expanded to any other forecasting model. ETS can capture trend,
 seasonality and error components in a time series through various forms
 such as additive, multiplicative or mixed. ETS accounts for 18 different
 exponential smoothing models. The automatic exponential smoothing model
-is used using \emph{ets()} function in the forecast package
+is applied using \emph{ets()} function in the forecast package
 \citep{hyndman2008automatic} in R to produce forecasts for the original
 and aggregated time series. For each series, \emph{ets()} identifies the
 most accurate model using the corrected Akaike's Information Criterion
@@ -538,7 +535,9 @@ measures including Root Mean Squared Error (RMSE), Mean Absolute Error
 (MAE) and Mean Error (ME), Mean Absolute Percentage Error (MAPE), Mean
 Absolute Scaled Error (MASE) and Root Mean Squared Scaled Error (RMSSE)
 are used.
-\textcolor{blue}{We only present the results for RMSSE due to the space limit of the journal and also because it is the recommended error metric in M5 competition [@M5competition2022]. We share the R code and the Rmarkdown file through the GitHub repository, which provide the possibility of changing the error metric in the YAML section of the Rmarkdown to obtain results for other metrics. We should also note that similar conclusions are reached when using other accuracy metrics.}
+\textcolor{blue}{We only present the results for RMSSE due to the space limit of the journal and also because it is the recommended error metric in M5 competition}
+\citep{M5competition2022}.
+\textcolor{blue}{We share the R code and the Rmarkdown file through the GitHub repository, which provide the possibility of changing the error metric in the YAML section of the Rmarkdown to obtain results for other metrics. We should also note that similar conclusions are reached when using other accuracy metrics.}
 
 RMSSE is given by:
 
@@ -571,7 +570,9 @@ Where \(f_p\) is false positive and \(f_n\) is false negative.
 
 \textcolor{blue}{The false positive rate represents the fraction of cases in which AD was incorrectly classified as a right model to use, while the AF was the correct one. Similarly, the false negative rate represents the fraction of cases in which AF was incorrectly classified as a right model to use, while AD was the correct one.}
 
-\textcolor{blue}{We can also illustrate the trade-off between false positives and true positives using a curve. It is called a receiver operating characteristic curve, or ROC curve [@james2021statistical]. The ROC curve is a plot of the true positive rate ($t_p$, sensitivity) versus the false positive rate ($f_p$, 1 - specificity) for a set of thresholds. We can quantify this by calculating the area under the curve, or AUC. The higher AUC, the better the model does at predictions. The maximum value of AUC is 1, which would be considered as a perfect prediction. Conversely, a model that performs no better than chance will have an AUC of 0.5 and would be considered as a poor one.}
+\textcolor{blue}{We can also illustrate the trade-off between false positives and true positives using a curve. It is called a receiver operating characteristic curve, or ROC curve}
+\citep{james2021statistical}.
+\textcolor{blue}{The ROC curve is a plot of the true positive rate ($t_p$, sensitivity) versus the false positive rate ($f_p$, 1 - specificity) for a set of thresholds. We can quantify this by calculating the area under the curve, or AUC. The higher AUC, the better the model does at predictions. The maximum value of AUC is 1, which would be considered as a perfect prediction. Conversely, a model that performs no better than chance will have an AUC of 0.5 and would be considered as a poor one.}
 
 In addition to the statistical measures discussed above, we also perform
 the utility evaluation of different models. The utility metric
@@ -589,9 +590,9 @@ evaluate the performance of models.
 \section{Time series data, features and temporal aggregation
 performance}\label{tsfeatures}}
 
-In this section, we first introduce the time series features extracted
-for each time series. Following that, we \textcolor{blue}{illustrate}
-these features for the monthly M4 competition dataset. Then, we describe
+In this section, we first introduce features extracted for each time
+series. Following that, we \textcolor{blue}{plot} the distribution of
+these features for the monthly M4 competition dataset. Then, we explore
 how non-overlapping temporal aggregation changes these features.
 Finally, we discuss the forecasting performance of AD and AF applied to
 the monthly M4 dataset.
@@ -683,40 +684,41 @@ Additionally, we include one more feature defined as origin, which is
 the origin of the time series M4 competition data, i.e.~Economic,
 Finance, Demographics and Industry.
 
-Figure \ref{fig:feature1} and \ref{fig:feature2} illustrates the
-corresponding distribution of each feature. Y-axis shows the frequency
-in terms of the number of time series, and X-axis indicates the range of
-values extracted for each feature. These figures show that the monthly
-M4 data covers a wide range of time series features, which makes it a
-suitable dataset for this research problem. We describe some significant
-features observed in the dataset, and readers are referred to Figure
-\ref{fig:feature1} and \ref{fig:feature2} for a full illustration of the
-features.
+Figure \ref{fig:feature1} and \ref{fig:feature2}
+\textcolor{blue}{illustrate} the corresponding distribution of each
+feature. Y-axis shows the count, or the number of time series, and
+X-axis indicates the range of values extracted for each feature. These
+figures show that the monthly M4 data covers a wide range of time series
+features, which makes it a suitable dataset for this research. We
+describe some significant features observed in the dataset, and readers
+are referred to Figure \ref{fig:feature1} and \ref{fig:feature2} for
+further details.
 
 The spectral entropy plot indicates that there is a range of time series
 from easy (less noise, more systematic information) to hard (more noise,
 less systematic information) to forecast. Coefficient of Variation is
-also skewed to the right and indicates less variability for the majority
-of series. The trend peaks near one and is skewed to the right
-indicating the strong presence of the trend in this dataset. We also
-observe that the nonlinearity feature peaks near zero and it is skewed
-to the right, which indicates the lack of nonlinearity in the time
-series. The autocorrelation lag1 and seasonal autocorrelation lag1 is
-skewed to the left, and is highly positive for many time series. We also
-measure the seasonal autocorrelation lag1 which is highly positive.
-Lumpiness is extremely low for almost all time series and stability has
-a range from low to high values. Both seasonal partial autocorrelation
-and the strength of seasonality indicate a lower strength of
-seasonality. Both stationaity and non-stattioanirity of series are
+also skewed to the right and indicates less variability for most series.
+The trend peaks near one and is skewed to the right indicating the
+strong presence of the trend in this dataset. We also observe that the
+nonlinearity feature peaks near zero and it is skewed to the right,
+which indicates the lack of nonlinearity in the time series. The
+autocorrelation lag1 and seasonal autocorrelation lag1 is skewed to the
+left, and is highly positive for many time series. We also measure the
+seasonal autocorrelation lag1 which is highly positive. Lumpiness is
+extremely low for almost all time series and stability has a range from
+low to high values. Both seasonal partial autocorrelation and the
+strength of seasonality indicate a lower strength of seasonality. Both
+\textcolor{blue}{stationarity and non-stationarity} of series are
 measured using unitroot\_pp and unitroot\_kpss statistics. They indicate
-a strong presence of staitonairy time series. Curvature shows a sharp
-distribution centered around zero, which means that most series do not
-have stochastic or chaotic nature. Time series of stochastic nature are
-associated with curves displaying positive curvature in a neighborhood
-of their initial points, whereas curves related to chaotic phenomena
-have a negative curvature. Hurst has a left skewed distribution with
-almost all series with a value close to one indicating the presence of
-the long memory in the series, which is related to the autocorrelation.
+a strong presence of \textcolor{blue}{stationary} time series. Curvature
+shows a sharp distribution centred around zero, which means that most
+series do not have stochastic or chaotic nature. Time series of
+stochastic nature are associated with curves displaying positive
+curvature in a neighbourhood of their initial points, whereas curves
+related to chaotic phenomena have a negative curvature. Hurst has a left
+skewed distribution with almost all series with a value close to one
+indicating the presence of the long memory in the series, which is
+related to the autocorrelation.
 
 The distribution of the e\_acf10 values is skewed to right and the plot
 shows that for most of the time series e\_acf10 is close to zero, which
@@ -745,14 +747,15 @@ means the leftover from trend and seasonality seems to be random.
 features}\label{taeffect}}
 
 In addition to \textcolor{blue}{extract the features} of monthly time
-series, we also compute features after transforming the time series to
-bi-monthly, quarterly, 4-monthly, semi-annual and annual granularity. We
-use these features to demonstrate how non-overlapping temporal
-aggregation may change time series features. To highlight the effect of
-NOTA, we first started by plotting the distribution of features at each
-level, however the difference between distributions was not revealing
-because features have log-tail distributions. Instead, we categorise
-features of the original series to into four categories using quantiles:
+series, we also compute features after transforming the time series
+\textcolor{blue}{into} bi-monthly, quarterly, 4-monthly, semi-annual and
+annual granularity. We use these features to demonstrate how
+non-overlapping temporal aggregation may change time series features. To
+highlight the effect of NOTA, we first started by plotting the
+distribution of features at each level, however the difference between
+distributions was not visible because features have log-tails. Instead,
+we categorise features of the original series to into four categories
+using quantiles:
 
 \begin{itemize}
 \tightlist
@@ -769,10 +772,10 @@ features of the original series to into four categories using quantiles:
 We then calculate the mean of features for each category and each time
 granularity. The results have been illustrated in Figure
 \ref{fig:featureagg1} and \ref{fig:featureagg2}. They show how time
-series features change from monthly to annual granularity for the time
-series features. The results indicate that as the level of time
-granularity increases from monthly to annual, some features become
-weaker and may disappear, while others dominate the series.
+series features change from monthly to annual granularity. The results
+indicate that as the level of time granularity increases from monthly to
+annual, some features become weaker and may disappear, while others
+dominate the series.
 
 \begin{figure}[H]
 
@@ -785,7 +788,7 @@ weaker and may disappear, while others dominate the series.
 
 We observe a decrease in curvature as we aggregate and it approaches
 zero at annual level, while nonlinearity increases with aggregation
-indicating that series become more non-linear. Mean increases and
+indicating that series become more nonlinear. Mean increases and
 variance decreases, however the effect is higher for very high category.
 We also observe that coefficient of variation decreases. Linearity is
 pushed toward zero if it is high or low, meaning that series at annual
@@ -838,14 +841,14 @@ The difference is especially notable at the annual level. From 48000
 monthly time series, the AF approach was superior in 30,147 cases
 (\(63\%\)) compared to 17,853 cases (\(37\%\)) for AD when forecasting
 annual time granularity.
-\textcolor{blue}{These results might be surprising, because common recommendation based on practice and in the literature (see Section \@ref{lit}) is to use AD over AF.}
+\textcolor{blue}{These results might be surprising, because common recommendation based on practice and in the literature (see Section \ref{lit}) is to use AD over AF.}
 However, we should note that almost all these studies report the overall
 accuracy improvement rather than the forecast accuracy at the series
 level. Our results show that recommending AD to forecast over the
 forecast horizon aggregation/lead-time might not necessarily lead to
 more accurate forecast. Moreover, AF is shown to be a very competitive
-forecasting strategy. This might be due to the time series features of
-the monthly time series discussed in section \ref{mtsmeasure}.
+forecasting strategy. This might be due to the features of the monthly
+time series discussed in section \ref{mtsmeasure}.
 
 \begin{figure}[H]
 
@@ -862,12 +865,11 @@ in the performance of AF and AD approaches.
 
 From Figure \ref{fig:MCB}, it is evident that there is a statistical
 difference between forecasts generated from AF and AD. The forecasts
-generated from AD approach are less accurate, while the strategy of
-aggregating forecasts proves to be more accurate. The results were
-cross-validated through multiple forecast horizons (h=12, 24 and 60) and
-via several other error metrics as described in \ref{errormetric}. The
-main conclusions are almost perfectly aligned with results demonstrated
-in Figure \ref{fig:MCB}.
+generated from AD approach are less accurate compared to AF. The results
+were cross-validated through multiple forecast horizons (h=12, 24 and
+60) and via several other error metrics as described in
+\ref{errormetric}. The main conclusions are almost perfectly aligned
+with results demonstrated in Figure \ref{fig:MCB}.
 
 \begin{figure}[H]
 
@@ -882,10 +884,10 @@ In Figure \ref{fig:RMSSE}, we showed that both AF and AD have diverging
 performance through different levels of aggregation. Moreover, Figure
 \ref{fig:featureagg1} and \ref{fig:featureagg2} demonstrate the
 evolution of the time series features through these levels. We believe
-that the presence of certain time series features might favorite AD or
-AF. We should note that the results presented for the rest of the paper
-are based on forecasts produced for the annual level (aggregation level
-= 12) using AF and AD approaches. This is because we see the highest
+that the presence of certain time series features might favour AD or AF.
+We should note that the results presented for the rest of the paper are
+based on forecasts produced for the annual level (aggregation level =
+12) using AF and AD approaches. This is because we see the highest
 difference in the performance at the annual level, and when the time
 series granularity is monthly, very often forecast is required at the
 annual level.
@@ -906,9 +908,9 @@ affecting the performance of these approaches. The first step in
 building such a model is to construct a dataset consisting of time
 series features and model class labels for a given time series.
 Therefore, we turn this problem into a classification supervised
-learning, using features as predictors and the winning approach labeled
+learning, using features as predictors and the winning approach labelled
 as AD or AF as the response variable or the outcome for each time
-series. We discover, extract and present the details on which time
+series. We discover, extract, and present the details on which time
 series features are the most influential on the accuracy of AF and AD
 approaches. In addition to interpretability, the algorithm should be
 able to accurately predict which model to use with a given set of time
@@ -918,7 +920,7 @@ annual level given the pronounced difference in accuracy at that level.
 Figure \ref{fig:featuresmatrix} shows a grid of scatterplots showing the
 bivariate interactions between various pairs of features. Each point
 corresponds to one time series. The figure also highlights the winning
-approach (i.e.~either AF or AD) when forecasting for annual time
+approach (i.e.~either AF or AD), when forecasting for annual time
 granularity. The black dots represent the situations where AD was more
 accurate, while yellow dots represent the opposite. Given the number of
 features used in this study, it is unfeasible to include the scatterplot
@@ -935,10 +937,10 @@ only the pairs plot for 10 features.
 \end{figure}
 
 Figure \ref{fig:featuresmatrix} demonstrates a perplexed relationship
-between features and AD/AF approaches, with a lot of noise, confounding
-features and lack of clear decision boundaries between AD and AF
-performance. It is clear that some features might have linear or
-non-linear relationships with each other, while others might be
+between features and AD/AF approach performance, influenced by noise,
+confounding features and lack of clear decision boundaries between AD
+and AF performance. It is clear that some features might have linear or
+nonlinear relationships with each other, while others might be
 unrelated. For most of features presented in Figure
 \ref{fig:featuresmatrix}, there is no strong relationship.
 
@@ -964,7 +966,7 @@ with the lowest misclassification error, highest F statistics and one of
 the best AUC statistics.
 
 \begin{table}
-\caption{\label{tab:cost}Comparison of different ML models}
+\caption{\label{tab:cost}\textcolor{blue}{Comparison of different ML models}}
 \centering
 \begin{tabular}[t]{lccc}
 \hline
@@ -1071,10 +1073,8 @@ examined by utility metric.
 
 }
 
-\caption{Utility accuracy comparison}\label{fig:tableCB}
+\caption{ \textcolor{blue}{Utility accuracy comparison} }\label{fig:tableCB}
 \end{figure}
-
-\textcolor{blue}{We should note that we have conducted a comprehensive study and searched for optimal setups of each model rather than using automatic ML models. Additional information about the setup of models can be found in the Appendix or in the [GitHub repository](https://github.com/bahmanrostamitabar/time-searies-featute-temporal-aggregation).}
 
 Among several algorithms, the RF provided the most accurate results
 according to the several criteria. Therefore, we further discuss this
@@ -1086,29 +1086,28 @@ algorithm}\label{building-the-random-forest-algorithm}}
 
 Individually, these trees tend to overfit the data and generate future
 forecasts with large variance. But, at the same time, they produce a low
-bias. Therefore, in order to reduce the variance, the Bagging process is
-building many trees on slightly different train data (since the data is
-bootstraped-resampled) and averages forecasts of all the trees in one
+bias. Therefore, to reduce the variance, the Bagging process is building
+many trees on slightly different train data (since the data is
+bootstrapped-resampled) and averages forecasts of all the trees in one
 unique forecast. For the sake of improving the Bagging process,
 \citet{breiman2001random} introduced the RF as an algorithm that mimics
-the Bagging process, but uses only a small random sample of the
-available features, for building each classification tree. The idea
-behind this is instead of just ``shaking'' the data via
-bootstraped-resampled process, we are introducing additional randomness
-in the process by ``shaking'' the features for the forecasting via
-random sampling of just part of the features. Therefore, each time a
-split in a tree is considered, a random sample of \emph{m} predictors is
-chosen as a split candidates from the full set of \emph{p} features. A
-fresh sample of \emph{m} features is taken at each split, and typically
-\emph{m} \(\approx\) \(\sqrt p\) \citep{friedman2001elements}. By
-forcing this process each time using the subsample of fresh features,
-the RF is decorrelating each tree. In this way, the process of averaging
-many different trees will reduce the variance more efficiently than in
-the case of correlated trees.
+the Bagging process but uses only a small random sample of the available
+features, for building each classification tree. The idea behind this is
+instead of just ``shaking'' the data via bootstrapped-resampled process,
+we are introducing additional randomness in the process by ``shaking''
+the features for the forecasting via random sampling of just part of the
+features. Therefore, each time a split in a tree is considered, a random
+sample of \emph{m} predictors is chosen as a split candidates from the
+full set of \emph{p} features. A fresh sample of \emph{m} features is
+taken at each split, and typically \emph{m} \(\approx\) \(\sqrt p\)
+\citep{friedman2001elements}. By forcing this process each time using
+the subsample of fresh features, the RF is decorrelating each tree. In
+this way, the process of averaging many different trees will reduce the
+variance more efficiently than in the case of correlated trees.
 
-In order to generate the RF model, there are several questions and
-tuning parameters that need to be optimized so that the final model
-could generate reliable and accurate forecasts. For that purpose,
+To generate the RF model, there are several questions and tuning
+parameters that need to be optimized so that the final model could
+generate reliable and accurate forecasts. For that purpose,
 \citet{friedman2001elements} have proposed the following methodology
 presented in the Algorithm \ref{alg:RF}.
 
@@ -1207,10 +1206,10 @@ by using the 3000 trees.
 \section{Association between time series features and AF/AD
 performance}\label{res}}
 
-Since the RF consists of a large number of trees, it is no longer
-possible to represent the resulting statistical learning procedure using
-a single tree, and it is not clear which variables are most important to
-the procedure \citep{james2013introduction}. Therefore, the RF improves
+Since the RF consists of many trees, it is no longer possible to
+represent the resulting statistical learning procedure using a single
+tree, and it is not clear which variables are most important to the
+procedure \citep{james2013introduction}. Therefore, the RF improves
 prediction accuracy at the expense of interpretability. Instead, it is
 possible to obtain the overall summary of the importance of each feature
 by measuring the mean decrease in the Gini index.
@@ -1229,15 +1228,15 @@ the features used in building trees during the random successive process
 of generating the RF model. Importance of the features is determined by
 the decrease in total amount of the node impurity by splits over a given
 predictor and averaging over all trees in RF. The decrease of the node
-impurity is measured by the Gini index. A large values of the Gini index
+impurity is measured by the Gini index. Large value of the Gini index
 indicates the important features. Clearly some features prove to be more
 important than others in classifying accurately the AF versus AD
 approach. The most important features are: \emph{curvature},
-\emph{nonlinearity}, \emph{seas\_pacf}, \emph{unitroot\_up}, \emph{mean}
+\emph{nonlinearity}, \emph{seas\_pacf}, \emph{unitroot\_pp}, \emph{mean}
 and \emph{ARCHM.LM}; while \emph{origin}, \emph{through}, \emph{peak}
 and \emph{flats spots} seems to be the least important for predicting
 which temporal aggregation method to use (i.e.~AF or AD). The quantity
-being modeled here is the probability of correctly choosing the AD
+being modelled here is the probability of correctly choosing the AD
 versus AF, and the opposite. The least important features have
 approximately half of the importance as the most significant ones.
 Difference in a decrease of node impurity from the \emph{curvature} to
@@ -1272,7 +1271,7 @@ their average effect on the response \citep{james2013introduction}.
 
 The rug marks at the bottom of each plot show the distribution of
 feature across the variable range. Note that here the data density is
-lower near the edges. This may cause unstable behavior of the curves in
+lower near the edges. This may cause unstable behaviour of the curves in
 those areas. The vertical scales of the plots show the probability of AF
 approach providing more accurate forecast for each feature as values of
 that feature changes. From Figure \ref{fig:pdpcommon1} and
@@ -1286,8 +1285,8 @@ unitroot\_pp and seas\_pacf may increases the chance of AF performing
 better, therefore AF become preferable. However, increasing lumpiness,
 entropy, nonlinearity, curvature, strength of seasonality may increase
 the chance of AD performing better, so the strong presence of these
-features may favorite AD over AF. It is important to note that we are
-less interested in the exact probability in these plots. Instead, we are
+features may favour AD over AF. It is important to note that we are less
+interested in the exact probability in these plots. Instead, we are
 interested in discovering how changing time series feature may
 increase/decrease the chance of AF or AD.
 
@@ -1297,7 +1296,7 @@ increase/decrease the chance of AF or AD.
 In time series forecasting, a forecast time granularity required to
 inform a decision, might be different from the time series granularity
 itself. For instance, if a time series is stored at a higher frequency
-(e.g.~monthly), forecasts might be required at a lower frequencies
+(e.g.~monthly), forecasts might be required at lower frequencies
 (e.g.~quarterly, annual). This is very common in modern organisations as
 data can be collected in the finest time granularities. Therefore, there
 are situations where a forecast of the total value over
@@ -1318,43 +1317,43 @@ aggregation (lower frequency) are smoother with less noise and more
 cleaner patterns, which often implies that forecasts created at the
 higher temporal aggregation levels are more accurate. This practice may
 exist in supply chains, where practitioners are usually advised to
-aggregate the series to the frequency levels aligned with their decision
-making horizons and then to create forecast for the period of interest.
-In this paper, we questioned this practice and explore the comparative
-performance of AF and AD approaches. We conducted a comparative research
-of the forecasting performance using 48,000 monthly series from M4 data,
-at different levels of temporal aggregation corresponding to generating
-forecasts at bi-monthly, quarterly, 4--monthly, semi-annual and annual
-levels. Results demonstrate that there is a significant number of series
-for which aggregate forecast (63\%) outperforms aggregate data (37\%).
+aggregate the series to the frequency levels aligned with their
+decision-making horizons and then to create forecast for the period of
+interest. In this paper, we questioned this practice and explore the
+comparative performance of AF and AD approaches. We conducted
+comparative research of the forecasting performance using 48,000 monthly
+series from M4 data, at different levels of temporal aggregation
+corresponding to generating forecasts at bi-monthly, quarterly,
+4--monthly, semi-annual, and annual levels. Results demonstrate that
+there is a significant number of series for which aggregate forecast
+(63\%) outperforms aggregate data (37\%).
 
 Given the fact that there is a lack of rules and indications on which
-approach should be used for a given time series, we further investigate
-the association between time series features and AF/AD forecasting
-performance. The need for such a research investigation has also been
-highlighted in the literature \citep{babai2022demand}. Therefore, we
-seek to shed lights on the effect of temporal aggregation on time series
-features and further investigate how they might affect the performance
-of AD and AF approaches. To that end, we first construct a database
-consisting of features of each time series as predictor and model class
-labeled as AF/AD as response/outcome. Then, we build several ML models
-to accurately predict the correct class and consequently recommend using
-the most accurate approach for a given time series and its features.
+approach should be used for a given time series, we investigate the
+association between time series features and AF/AD forecasting
+performance. We seek to shed lights on the effect of temporal
+aggregation on time series features and then investigate how they might
+affect the performance of AD and AF approaches. To that end, we first
+construct a database consisting of features of each time series as
+predictor and model class labelled as AF/AD as response/outcome. Then,
+we examined 16 different models to accurately predict the correct class
+and consequently recommend using the most accurate approach for a given
+time series and its features.
 
 Our results show that Random Forest model provides the best performance
 in accurately classifying approaches measured through statistical and
 utility metrics. Moreover, RF model is used to reveal the most important
 time series features in producing the accurate prediction. Additionally,
-we extract the partial dependence plot to describe the contribution of
-time series features through a probability.
-\textcolor{blue}{This helps to show how the value of a feature may favor AF over AD approach}.
+we extract the partial dependence plot to describe the association
+between features and forecast performance of AD and AF.
+\textcolor{blue}{The partial dependence plot helps to show how the value of a feature may favour AF over AD approach}.
 The main findings of this study can be summarised as follows:
 
 \begin{itemize}
 \item
-  First of all, when a forecast of the total value over several time
-  periods ahead is required (i.e.~aggregation horizon or lead-time), we
-  show that AF is a significantly better methodology to use overall. The
+  First, when a forecast of the total value over several time periods
+  ahead is required (i.e.~aggregation horizon or lead-time), we show
+  that AF is a significantly better methodology to use overall. The
   findings indicate that neither of the approaches are always the most
   accurate, when the accuracy is reported for the individual time
   series. The findings clearly show that the most accurate forecast is
@@ -1365,11 +1364,13 @@ The main findings of this study can be summarised as follows:
   Second, non-overlapping temporal aggregation changes the features of
   time series. The magnitude of the change varies for different
   features. In particular, we observe that with increase in the
-  aggregation level, the strength of seasonality, the autocorrelation,
-  coefficient of variation, linearity, curvature and KPSS unitroot
-  statistic decrease. However, nonlinearity, mean, variance, ARCH.LM,
-  trend , unitroot pp statistics increase. Entropy is the only measure
-  that both increases and decreases based on its initial value.
+  aggregation level, the strength of seasonality, the
+  \emph{autocorrelation}, \emph{coefficient of variation},
+  \emph{linearity}, \emph{curvature} and \emph{KPSS unitroot} statistic
+  decrease. However, \emph{nonlinearity}, \emph{mean}, \emph{variance},
+  \emph{ARCH.LM}, \emph{trend}, \emph{unitroot\_pp} statistics increase.
+  Entropy is the only measure that both increases and decreases based on
+  its initial value.
 \item
   Third, Random Forest model is the most accurate classifier ML
   algorithm in predicting which approach provides more accurate forecast
@@ -1378,17 +1379,18 @@ The main findings of this study can be summarised as follows:
   Fourth, RF model revels that the top ten important features for
   predicting whether AF or AD should be used for a given monthly time
   series in M4 competition include \emph{curvature},
-  \emph{nonlinearity}, \emph{seas\_pacf}, \emph{unitroot\_up},
-  \emph{mean}, \emph{ARCHM.LM}, \emph{Coifficient of Variation},
+  \emph{nonlinearity}, \emph{seas\_pacf}, \emph{unitroot\_pp},
+  \emph{mean}, \emph{ARCHM.LM}, \emph{coifficient of variation},
   \emph{stability}, \emph{linearity} and \emph{max\_level\_shift}.
 \item
   Fifth, dependence plots provide some indications on how time series
-  features may favorite AD over AF, vice-versa. We observe that
-  increasing seas\_pacf, trend, ARCH.LM, hurst, autocorrelation lag 1
-  and unitroot\_pp increases the chance of AF performing better. While,
-  increasing Coefficient of Variation, entropy, nonlinearity, curvature
+  features may favour AD over AF, vice-versa. We observe that increasing
+  \emph{seas\_pacf}, \emph{trend}, \emph{ARCH.LM}, \emph{hurst},
+  \emph{autocorrelation lag 1} and \emph{unitroot\_pp} increases the
+  chance of AF performing better. While, increasing \emph{coefficient of
+  variation}, \emph{entropy}, \emph{nonlinearity}, and \emph{curvature}
   increases the chance of AD performing better, so the strong presence
-  of these features may favorite AD over AF.
+  of these features may favour AD over AF.
 \end{itemize}
 
 \textcolor{blue}{The proposed framework can be generalised to be used with other time series data. We believe that the conclusion should remain true for lower frequency time series such as monthly and quarterly. However, a different conclusion might be reached when using higher frequency time series data such sub-daily, daily, or weekly. This will bring further complications such as the presence of multiple seasonal cycles and long seasonalities. Therefore, time series features and the way they may change with increasing the aggregation level may differ. Also, the choice of forecasting method becomes important as a method like ETS cannot handle those complications. This would be an important avenue for further research.}
@@ -1409,9 +1411,12 @@ would prove to be useful:
 \item
   \textcolor{blue}{Given that the exact relationship between time series features and the optimal temporal aggregation approach is not known, one direction for future research could focus on using meta-learning and other advanced techniques such as transformers neural networks and attentional mechanism to further shed lights on this problem.}
 \item
-  \textcolor{blue}{In this paper, we define the AD and AF approaches to forecast a cumulative number of periods ahead, therefore it is considered as a single output approach. It might be interesting to investigate the forecasting by temporal aggregation as a multi-output scenario [@de2022data], where a sequence of two or more future data points are of interest.}
+  \textcolor{blue}{In this paper, we define the AD and AF approaches to forecast a cumulative number of periods ahead, therefore it is considered as a single output approach. It might be interesting to investigate the forecasting by temporal aggregation as a multi-output scenario}
+  \citep{de2022data}\textcolor{blue}{, where a sequence of two or more future data points are of interest.}
 \item
-  \textcolor{blue}{Finally, using time-series classification techniques [@buza2018time] to classify time series data based on various factors including time series futures and investigate their association with forecast accuracy of temporal aggregation approaches might be also an interesting avenue for further research.}
+  \textcolor{blue}{Finally, using time-series classification techniques}
+  \citep{buza2018time}
+  \textcolor{blue}{to classify time series data based on various factors including time series futures and investigate their association with forecast accuracy of temporal aggregation approaches might be also an interesting avenue for further research.}
 \end{itemize}
 
 \hypertarget{reproducibility}{%

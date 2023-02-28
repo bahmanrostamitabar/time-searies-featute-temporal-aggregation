@@ -154,7 +154,7 @@ Figure \ref{fig:expdes} illustrates the framework of the experimental design per
 
 Given the outperformance of RF among all models used in this study, we will describe it in more details in section \ref{ml}.} The model can help us to identify the most important time series features that lead to the outperformance of RF. Moreover, it can also reveal how time series features are connected to the performance of AD and AF. 
 
-Due to the page restrictions, details regarding the initial set up, method of optimization and cost function of these algorithms are not presented in the paper. \textcolor{blue}{We should note that we have conducted a comprehensive study and searched for optimal setups of each model rather than using automatic ML models. Additional information about the setup of models can be found in the Appendix or in the [GitHub repository](https://github.com/bahmanrostamitabar/time-searies-featute-temporal-aggregation).}
+Due to the page restrictions, details regarding the initial set up, method of optimization and cost function of these algorithms are not presented in the paper. \textcolor{blue}{We should note that we have conducted a comprehensive study and searched for optimal setups of each model rather than using automatic ML models. Additional information about the setup of models can be found in the Appendix or in the} [GitHub repository](https://github.com/bahmanrostamitabar/time-searies-featute-temporal-aggregation).
 
 
 ```{r expdes, echo=FALSE,fig.align='center', out.width="70%", fig.cap = "Design of the experiment framework"}
@@ -326,7 +326,7 @@ In this section, we examine the prediction accuracy of the ML models in classify
 Table \ref{tab:cost} demonstrates that RF model has the best performance with the lowest misclassification error, highest F statistics and one of the best AUC statistics.
 
 \begin{table}
-\caption{\label{tab:cost}Comparison of different ML models}
+\caption{\label{tab:cost}\textcolor{blue}{Comparison of different ML models}}
 \centering
 \begin{tabular}[t]{lccc}
 \hline
@@ -397,7 +397,7 @@ Figure \ref{fig:tableCB} demonstrates that RF has the smallest utility metric (c
 ```{r, eval=FALSE, echo=FALSE}
 #Drugi nacin da napravis tabelu, How this has been calculated?
 \begin{table}
-\caption{\label{tab:utiliy}Utility accuracy measure}
+\caption{\label{tab:utiliy}}
 \centering
 \begin{tabular}[t]{lrrrrrrrrr}
 \hline
@@ -409,7 +409,7 @@ Overall RMSSE & 17283.65 & 16030.93 & 16519.03 & 16637.65 & 17188.18 & 17298.30 
 \end{table}
 ```
 
-```{r tableCB, echo=FALSE, warning=FALSE, fig.cap="Utility accuracy comparison",fig.align='center',out.width="60%"}
+```{r tableCB, echo=FALSE, warning=FALSE, fig.cap=" \\textcolor{blue}{Utility accuracy comparison} ",fig.align='center',out.width="60%"}
 knitr::include_graphics("img/300dpi/utility.png")
 ```
 
@@ -501,7 +501,7 @@ In time series forecasting, a forecast time granularity required to inform a dec
 
 There is a common assumption that series at the higher level of temporal aggregation (lower frequency) are smoother with less noise and more cleaner patterns, which often implies that forecasts created at the higher temporal aggregation levels are more accurate. This practice may exist in supply chains, where practitioners are usually advised to aggregate the series to the frequency levels aligned with their decision-making horizons and then to create forecast for the period of interest. In this paper, we questioned this practice and explore the comparative performance of AF and AD approaches. We conducted comparative research of the forecasting performance using 48,000 monthly series from M4 data, at different levels of temporal aggregation corresponding to generating forecasts at bi-monthly, quarterly, 4–monthly, semi-annual, and annual levels. Results demonstrate that there is a significant number of series for which aggregate forecast (63%) outperforms aggregate data (37%).
 
-Given the fact that there is a lack of rules and indications on which approach should be used for a given time series, we further investigate the association between time series features and AF/AD forecasting performance. The need for such a research investigation has also been highlighted in the literature [@babai2022demand]. Therefore, we seek to shed lights on the effect of temporal aggregation on time series features and further investigate how they might affect the performance of AD and AF approaches. To that end, we first construct a database consisting of features of each time series as predictor and model class labelled as AF/AD as response/outcome. Then, we examined 16 different models to accurately predict the correct class and consequently recommend using the most accurate approach for a given time series and its features. 
+Given the fact that there is a lack of rules and indications on which approach should be used for a given time series, we investigate the association between time series features and AF/AD forecasting performance. We seek to shed lights on the effect of temporal aggregation on time series features and then investigate how they might affect the performance of AD and AF approaches. To that end, we first construct a database consisting of features of each time series as predictor and model class labelled as AF/AD as response/outcome. Then, we examined 16 different models to accurately predict the correct class and consequently recommend using the most accurate approach for a given time series and its features. 
 
 Our results show that Random Forest model provides the best performance in accurately classifying approaches measured through statistical and utility metrics. Moreover, RF model is used to reveal the most important time series features in producing the accurate prediction. Additionally, we extract the partial dependence plot to describe the association between features and forecast performance of AD and AF. \textcolor{blue}{The partial dependence plot helps to show how the value of a feature may favour AF over AD approach}. The main findings of this study can be summarised as follows:
 
@@ -525,9 +525,9 @@ Given the findings of this study and the potential value of temporal aggregation
 
 - \textcolor{blue}{Given that the exact relationship between time series features and the optimal temporal aggregation approach is not known, one direction for future research could focus on using meta-learning and other advanced techniques such as transformers neural networks and attentional mechanism to further shed lights on this problem.}
 
-- \textcolor{blue}{In this paper, we define the AD and AF approaches to forecast a cumulative number of periods ahead, therefore it is considered as a single output approach. It might be interesting to investigate the forecasting by temporal aggregation as a multi-output scenario [@de2022data], where a sequence of two or more future data points are of interest.}
+- \textcolor{blue}{In this paper, we define the AD and AF approaches to forecast a cumulative number of periods ahead, therefore it is considered as a single output approach. It might be interesting to investigate the forecasting by temporal aggregation as a multi-output scenario} [@de2022data]\textcolor{blue}{, where a sequence of two or more future data points are of interest.}
 
-- \textcolor{blue}{Finally, using time-series classification techniques [@buza2018time] to classify time series data based on various factors including time series futures and investigate their association with forecast accuracy of temporal aggregation approaches might be also an interesting avenue for further research.}
+- \textcolor{blue}{Finally, using time-series classification techniques} [@buza2018time] \textcolor{blue}{to classify time series data based on various factors including time series futures and investigate their association with forecast accuracy of temporal aggregation approaches might be also an interesting avenue for further research.}
 
 # Reproducibility {.unnumbered}
 
