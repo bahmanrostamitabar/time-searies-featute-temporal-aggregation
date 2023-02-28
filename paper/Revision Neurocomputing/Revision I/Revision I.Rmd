@@ -78,7 +78,7 @@ A key question then to be answered is: should the original time series be used t
 
 
 ```{r example_oanoa, echo=FALSE, out.width="90%", fig.cap = "Aggregate forecast vs. aggregate data approaches. Assuming a montly time series is available and a forecast over one quarter (aggregation level = 3 months) is required. We first generate forecast for 3 periods ahead and then sum them up to create forecast over the quarter (Forecast by AF approach). Then, we create the temporally aggregated series by dividing the original series into the block of 3 periods. Next, we forecast for 1 period ahead (Forecast by AD approach)."}
-knitr::include_graphics("img/300dpi/nota.png")
+knitr::include_graphics("img/nota.png")
 ```
 
 For the later, we often use the non-overlapping temporal aggregation (NOTA) approach. Using this approach, the original series is divided into a consecutive non-overlapping bucket of time, starting from the most recent period backward. The size of the bucket is equal to the number of time periods required in forecasting, which is referred to \textcolor{blue}{as aggregation level}, $m$. The aggregated series is then created by summing up the values inside each bucket. The number of aggregate observations is $[N/m]$, where $N$ is the number of periods, and the $[x]$ operator returns the integer part of $x$ [@rostami2019impact]. \textcolor{blue}{When we aggregate data to lower frequency domain such as annual using NOTA, we loose some information and AD is losing some of the sensitivity compared to AF. AF may better capture detailed information at the higher frequency resulting in better accuracy. However, this might be also affected by forecast horizon, as using AF might not be useful when forecasting far ahead into the future.}
@@ -158,7 +158,7 @@ Due to the page restrictions, details regarding the initial set up, method of op
 
 
 ```{r expdes, echo=FALSE,fig.align='center', out.width="70%", fig.cap = "Design of the experiment framework"}
-knitr::include_graphics("img/300dpi/experiment_design.png")
+knitr::include_graphics("img/experiment_design.png")
 ```
 
 ## Forecasting approaches
@@ -247,11 +247,11 @@ The distribution of the e_acf10 values is skewed to right and the plot shows tha
 
 
 ```{r feature1, echo=FALSE,fig.align='center', out.width="70%", fig.cap = " \\textcolor{blue}{Features of monthly time series from M4 competition dataset} "}
-knitr::include_graphics("img/300dpi/featurets_selection1.png")
+knitr::include_graphics("img/featurets_selection1.png")
 ```
 
 ```{r feature2, echo=FALSE,fig.align='center', out.width="70%", fig.cap = " \\textcolor{blue}{Features of monthly time series from M4 competition dataset (continue)} "}
-knitr::include_graphics("img/300dpi/featurets_selection2.png")
+knitr::include_graphics("img/featurets_selection2.png")
 ```
 
 
@@ -267,13 +267,13 @@ In addition to \textcolor{blue}{extract the features} of monthly time series, we
 We then calculate the mean of features for each category and each time granularity. The results have been illustrated in Figure \ref{fig:featureagg1} and \ref{fig:featureagg2}. They show how time series features change from monthly to annual granularity. The results indicate that as the level of time granularity increases from monthly to annual, some features become weaker and may disappear, while others dominate the series.
 
 ```{r featureagg1, echo=FALSE,fig.align='center', out.width="70%", fig.cap = " \\textcolor{blue}{The effect of non-overlapping temporal aggregation on monthly time series features of M4 competition dataset} "}
-knitr::include_graphics("img/300dpi/mp_category_all1.png")
+knitr::include_graphics("img/mp_category_all1.png")
 ```
 
 We observe a decrease in curvature as we aggregate and it approaches zero at annual level, while nonlinearity increases with aggregation indicating that series become more nonlinear. Mean increases and variance decreases, however the effect is higher for very high category. We also observe that coefficient of variation decreases. Linearity is pushed toward zero if it is high or low, meaning that series at annual level losses its linearity feature. Both uniroot_pp and unitroot_kpss become close to zero with increasing aggregation level, highlighting the fact that series become more non-stationary if the monthly series \textcolor{blue}{is stationary}, otherwise it \textcolor{blue}{remains} almost the same. The measures related to seasonality such as seasonal strength, autocorrelation lag1 and the sum of squared of the first 10 autocorrelation decreases. It is interesting to observe that entropy increases with aggregation if it is not very high at monthly level, meaning that series become difficult to forecast. However we see a reduction in entropy if it is very high at the monthly level. We also observe an increase for ARCH.HM especially if it is very low at the monthly level. If it is very close to one, it stays almost unchanged.
 
 ```{r featureagg2, echo=FALSE,fig.align='center', out.width="70%", fig.cap = " \\textcolor{blue}{The effect of non-overlapping temporal aggregation on monthly time series features of M4 competition dataset (continue)} "}
-knitr::include_graphics("img/300dpi/mp_category_all2.png")
+knitr::include_graphics("img/mp_category_all2.png")
 ```
 
 We should note that some features are not stable and show chaotic behaviors at the annual level. This might be because these features are not measurable for some time series. Therefore, they are returned as NA (not known) and are removed when calculating the mean of each category, hence the disorder of these features at the annual level.
@@ -285,7 +285,7 @@ In this study, we aim at generating forecasts for a forecast horizon aggregation
 Figure \ref{fig:RMSSE} displays a boxplot of RMSSE measure created for all 48,000 series at various level of forecast granularities. Results demonstrate that both AF and AD approaches might outperform each other for different time series. However, AF approach is generating consistently more accurate forecasts through all aggregation levels and the difference becomes more pronounced as aggregation level increases. The difference is especially notable at the annual level. From 48000 monthly time series, the AF approach was superior in 30,147 cases ($63\%$) compared to 17,853 cases ($37\%$) for AD when forecasting annual time granularity. \textcolor{blue}{These results might be surprising, because common recommendation based on practice and in the literature (see Section \ref{lit}) is to use AD over AF.} However, we should note that almost all these studies report the overall accuracy improvement rather than the forecast accuracy at the series level. Our results show that recommending AD to forecast over the forecast horizon aggregation/lead-time might not necessarily lead to more accurate forecast. Moreover, AF is shown to be a very competitive forecasting strategy. This might be due to the features of the monthly time series discussed in section \ref{mtsmeasure}.
 
 ```{r RMSSE,echo=FALSE,fig.align='center', out.width="70%", fig.cap = "RMSSE errors through aggregation levels."}
-knitr::include_graphics("img/300dpi/box_plot_rmsse.png")
+knitr::include_graphics("img/box_plot_rmsse.png")
 ```
 
 We have also conducted a statistical test using MCB (Multiple Comparison with the Best method) [@MCB] to assess the statistical significance in the performance of AF and AD approaches. 
@@ -293,7 +293,7 @@ We have also conducted a statistical test using MCB (Multiple Comparison with th
 From Figure \ref{fig:MCB}, it is evident that there is a statistical difference between forecasts generated from AF and AD. The forecasts generated from AD approach are less accurate compared to AF. The results were cross-validated through multiple forecast horizons (h=12, 24 and 60) and via several other error metrics as described in \ref{errormetric}. The main conclusions are almost perfectly aligned with results demonstrated in Figure \ref{fig:MCB}.
 
 ```{r MCB, echo=FALSE,fig.align='center', out.width="100%", fig.cap =" \\textcolor{blue}{Performance of AF and AD models evaluated through MCB test. RMSSE values are used for computing the ranks and a 95 percentile confidence level.}"}
-knitr::include_graphics("img/300dpi/Fig_MCB.png")
+knitr::include_graphics("img/Fig_MCB.png")
 ```
 
 In Figure \ref{fig:RMSSE}, we showed that both AF and AD have diverging performance through different levels of aggregation. Moreover, Figure \ref{fig:featureagg1} and \ref{fig:featureagg2} demonstrate the evolution of the time series features through these levels. We believe that the presence of certain time series features might favour AD or AF. 
@@ -310,7 +310,7 @@ Figure \ref{fig:featuresmatrix} shows a grid of scatterplots showing the bivaria
 
 
 ```{r featuresmatrix, echo=FALSE,fig.align='center', out.width="100%", fig.cap = "Time series features matrix. Each point indicates one single time series with a feature in x-axis and another at y-axis. The black and yellow colors show the outperformance of AD and AF, respectively."}
-knitr::include_graphics("img/300dpi/pair_plot.png")
+knitr::include_graphics("img/pair_plot.png")
 ```
 
 Figure \ref{fig:featuresmatrix} demonstrates a perplexed relationship between features and AD/AF approach performance, influenced by noise, confounding features and lack of clear decision boundaries between AD and AF performance. It is clear that some features might have linear or nonlinear relationships with each other, while others might be unrelated. For most of features presented in Figure \ref{fig:featuresmatrix}, there is no strong relationship.
@@ -369,7 +369,7 @@ CNN & 0.7662412 & 0.3700694 & 0.5158014\\
 
 
 ```{r MCB_ML, echo=FALSE,fig.align='center', out.width="100%", fig.cap = "\\textcolor{blue}{Performance of different models evaluated through MCB test. RMSSE errors are used for computing the ranks and a 95 percentile confidence level.}"}
-knitr::include_graphics("img/300dpi/Fig_MCB_all(review).png")
+knitr::include_graphics("img/Fig_MCB_all(review).png")
 ```
 
 The Figure \ref{fig:MCB_ML} shows the result of MCB test conducted to examine the difference between the performance of ML algorithms. The results show that there is a statistically significant difference between the performance of RF and all other models. According to the MCB test, AD approach generated the most inaccurate forecasts and therefore drastically underperformed compared to the others. All other ML models have much better performance, and the RF comes out as the ultimate winner in terms of mean rank classification accuracy on the test data set.
@@ -410,7 +410,7 @@ Overall RMSSE & 17283.65 & 16030.93 & 16519.03 & 16637.65 & 17188.18 & 17298.30 
 ```
 
 ```{r tableCB, echo=FALSE, warning=FALSE, fig.cap=" \\textcolor{blue}{Utility accuracy comparison} ",fig.align='center',out.width="60%"}
-knitr::include_graphics("img/300dpi/utility.png")
+knitr::include_graphics("img/utility.png")
 ```
 
 
@@ -446,7 +446,7 @@ To generate the RF model, there are several questions and tuning parameters that
 \end{algorithm}
 
 ```{r algorithm, eval= FALSE, echo=FALSE,fig.align='center', out.width="70%", fig.cap = "Determining the optimal depth and the of the trees in the random forest model."}
-knitr::include_graphics("img/300dpi/algorithm_delete.png")
+knitr::include_graphics("img/algorithm_delete.png")
 ```
 
 The first question is how many features to randomly choose for training in each individual tree (i.e. tree depth)? The question of how many trees to use for fitting the RF model emerges, which also needs to be answered in parallel. In order to determine the optimal number of features and trees for building an RF model, the evaluation process is performed with a different number of features and trees in each split. Therefore, the resulting process represents the optimization problem of seeking the minimum of the surface generated by features in each split, trees and resulting out of the bag (OOB) forecasting error. (Please refer to Figure \ref{fig:surface}). OOB represents the misclassification error of the RF model while performing the classification tasks. Also, OOB is the approximation of the cross validated test error, since the process of fitting bootstrapped data sets consists of training the model on just part of the original data and then predicting the remaining part of the original data (i.e. out of bag data). By averaging OOB errors from many different tree models (which comprise the final random forest model), the final OOB is obtained. 
@@ -456,13 +456,13 @@ Figure \ref{fig:surface} reveals that increasing the number of trees used for ge
 The Figure \ref{fig:tree_depth} represents the optimal number of splits (randomly selected features) used during the process of building each classification tree, according to OOB forecasting error. As demonstrated in Figure \ref{fig:tree_depth} the OOB error is minimized on the depth of 10. Therefore, the optimal number of features (i.e. tree depth) for the RF model is 10.
 
 ```{r surface, echo=FALSE,fig.align='center', out.width="70%", fig.cap = "Surface plot of the number of features (depth), number of trees and misclassification error of random forest model."}
-knitr::include_graphics("img/300dpi/Fig_persp.png")
+knitr::include_graphics("img/Fig_persp.png")
 ```
 
 The second tuning question is how many trees should be used for generating the RF model? One of the good merits that help in this process is the resilience of RF on overfitting [@friedman2001elements]. Averaging process during the RF building phase remedies the negative effects of choosing a large number of trees for fitting the model, since this will not result in an increase in variance on the test set. This implies that the penalty of choosing a too large number of trees on models' overall performance is minor. The criteria for this judgment is based on the OOB misclassification error, which RF model produces on a given data set. Therefore, the optimal number of trees is chosen by determining the number of trees where the OOB misclassification error is stabilized (Figure \ref{fig:tree_depth}). From Figure \ref{fig:tree_depth}, it is clear that error is stabilized by using the 3000 trees.
 
 ```{r tree_depth, echo=FALSE,fig.align='center', out.width="90%", fig.cap = "Determining the optimal depth and the of number the trees in the random forest model."}
-knitr::include_graphics("img/300dpi/Fig_tree_depth_and_ntrees.png")
+knitr::include_graphics("img/Fig_tree_depth_and_ntrees.png")
 ```
 
 
@@ -472,17 +472,17 @@ Since the RF consists of many trees, it is no longer possible to represent the r
 
 
 ```{r RFpartial, echo=FALSE,fig.align='center', out.width="95%", fig.cap = "Predictor features importance spectrum for the M4 data. A feature importance is computed using the mean decrease in Gini index."}
-knitr::include_graphics("img/300dpi/Fig_importance.png")
+knitr::include_graphics("img/Fig_importance.png")
 ```
 
 The Figure \ref{fig:RFpartial} demonstrates the overall importance of the features used in building trees during the random successive process of generating the RF model. Importance of the features is determined by the decrease in total amount of the node impurity by splits over a given predictor and averaging over all trees in RF. The decrease of the node impurity is measured by the Gini index. Large value of the Gini index indicates the important features. Clearly some features prove to be more important than others in classifying accurately the AF versus AD approach. The most important features are: *curvature*, *nonlinearity*, *seas_pacf*, *unitroot_pp*, *mean* and *ARCHM.LM*; while *origin*, *through*, *peak* and *flats spots* seems to be the least important for predicting which temporal aggregation method to use (i.e. AF or AD). The quantity being modelled here is the probability of correctly choosing the AD versus AF, and the opposite. The least important features have approximately half of the importance as the most significant ones. Difference in a decrease of node impurity from the *curvature* to the *origin* feature is more than 250 units, indicating the wide range of features importance.
 
 ```{r pdpcommon1, echo=FALSE,fig.align='center', out.width="100%", fig.cap = " \\textcolor{blue}{Partial dependence plot - the range of features vs. the probability of classifying AF versus AD} "}
-knitr::include_graphics("img/300dpi/partial_dependence1.png")
+knitr::include_graphics("img/partial_dependence1.png")
 ```
 
 ```{r pdpcommon2, echo=FALSE,fig.align='center', out.width="100%", fig.cap = " \\textcolor{blue}{Partial dependence plot - the range of features vs. the probability of classifying AF versus AD (continue)} "}
-knitr::include_graphics("img/300dpi/partial_dependence2.png")
+knitr::include_graphics("img/partial_dependence2.png")
 ```
 
 
