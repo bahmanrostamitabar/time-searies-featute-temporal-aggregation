@@ -44,7 +44,7 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 \hypersetup{breaklinks=true,
             bookmarks=true,
             pdfauthor={},
-            pdftitle={On time series features and forecasting by temporal aggregation},
+            pdftitle={Exploring the association between time series features and forecasting by temporal aggregation using machine learning},
             colorlinks=false,
             urlcolor=blue,
             linkcolor=magenta,
@@ -90,8 +90,8 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 
 \begin{frontmatter}
 
-  \title{On time series features and forecasting by temporal
-aggregation}
+  \title{Exploring the association between time series features and
+forecasting by temporal aggregation using machine learning}
     \author[Cardiff Business School]{Bahman Rostami-Tabar%
   \corref{cor1}%
   }
@@ -385,7 +385,13 @@ Forecasting (THieF), which creates multiple temporally aggregated series
 using NOTA, generate forecasts and then reconciles them to obtain the
 required forecast.
 
-\textcolor{blue}{A stream of research investigates the use of features in time series forecasting based on multiple time frequency spaces in visibility graphs. @liu2020fuzzy proposed a multiple time-frequency spaces fuzzy interval forecasting model using datasets from energy and finance. The original series is decomposed into different components, which are then used to reconstruct a group of time series at different temporal scales. Next, a prediction interval forecast is generated for the different reconstructed time series that are then aggregated using the induced-ordered weighted averaging aggregation operation to generate the final forecast. @hu2022efficient suggested a novel time series forecasting model based on a new metric measuring nodes similarity in visibility graph. In the proposed model, time series is first converted into a visibility graph. Next, similarities between nodes are determined and finally forecasts are generated using the normalized similarity distribution. @hu2022time investigated the features of time series to generate accuracy forecasts from the perspective of fuzzy interaction between nodes. They used a fuzzy cognitive visibility graph to convert the time series into a pair of directed weighted graphs. Then, the weighted multi-subgraph similarity is developed to calculate the similarity between nodes. They then proposed a novel forecasting method for time series forecasts based on fuzzy similarity distribution that can efficiently capture the spatio-temporal dependency in the time series data. The empirical results confirmed the benefits of leveraging fuzzy interaction for time series forecasting based on the visibility graphs.}
+\textcolor{blue}{A stream of research investigates the use of features in time series forecasting based on multiple time frequency spaces in visibility graphs.}
+\citet{liu2020fuzzy}
+\textcolor{blue}{proposed a multiple time-frequency spaces fuzzy interval forecasting model using datasets from energy and finance. The original series is decomposed into different components, which are then used to reconstruct a group of time series at different temporal scales. Next, a prediction interval forecast is generated for the different reconstructed time series that are then aggregated using the induced-ordered weighted averaging aggregation operation to generate the final forecast.}
+\citet{hu2022efficient}
+\textcolor{blue}{suggested a novel time series forecasting model based on a new metric measuring nodes similarity in visibility graph. In the proposed model, time series is first converted into a visibility graph. Next, similarities between nodes are determined and finally forecasts are generated using the normalized similarity distribution.}
+\citet{hu2022time}
+\textcolor{blue}{investigated the features of time series to generate accuracy forecasts from the perspective of fuzzy interaction between nodes. They used a fuzzy cognitive visibility graph to convert the time series into a pair of directed weighted graphs. Then, the weighted multi-subgraph similarity is developed to calculate the similarity between nodes. They then proposed a novel forecasting method for time series forecasts based on fuzzy similarity distribution that can efficiently capture the spatio-temporal dependency in the time series data. The empirical results confirmed the benefits of leveraging fuzzy interaction for time series forecasting based on the visibility graphs.}
 
 Although all approaches including AF, AD and using multiple TA levels
 have demonstrated forecasting gain, arguably none of them are suitable
@@ -603,7 +609,7 @@ and \citet{hyndman2021forecasting}.
 
 \begin{table}[!h]
 
-\caption{\label{tab:summaryfeature}     extcolor{blue}{Time series features considered in this study and their descriptions} }
+\caption{\label{tab:summaryfeature}\textcolor{blue}{Time series features considered in this study and their descriptions}}
 \centering
 \resizebox{\linewidth}{!}{
 \fontsize{11}{13}\selectfont
@@ -722,7 +728,7 @@ means the leftover from trend and seasonality seems to be random.
 
 }
 
-\caption{   extcolor{blue}{Features of monthly time series from M4 competition dataset} }\label{fig:feature1}
+\caption{ \textcolor{blue}{Features of monthly time series from M4 competition dataset} }\label{fig:feature1}
 \end{figure}
 
 \begin{figure}[H]
@@ -731,7 +737,7 @@ means the leftover from trend and seasonality seems to be random.
 
 }
 
-\caption{   extcolor{blue}{Features of monthly time series from M4 competition dataset (continue)} }\label{fig:feature2}
+\caption{ \textcolor{blue}{Features of monthly time series from M4 competition dataset (continue)} }\label{fig:feature2}
 \end{figure}
 
 \hypertarget{taeffect}{%
@@ -774,7 +780,7 @@ weaker and may disappear, while others dominate the series.
 
 }
 
-\caption{   extcolor{blue}{The effect of non-overlapping temporal aggregation on monthly time series features of M4 competition dataset} }\label{fig:featureagg1}
+\caption{ \textcolor{blue}{The effect of non-overlapping temporal aggregation on monthly time series features of M4 competition dataset} }\label{fig:featureagg1}
 \end{figure}
 
 We observe a decrease in curvature as we aggregate and it approaches
@@ -802,7 +808,7 @@ monthly level. If it is very close to one, it stays almost unchanged.
 
 }
 
-\caption{   extcolor{blue}{The effect of non-overlapping temporal aggregation on monthly time series features of M4 competition dataset (continue)} }\label{fig:featureagg2}
+\caption{ \textcolor{blue}{The effect of non-overlapping temporal aggregation on monthly time series features of M4 competition dataset (continue)} }\label{fig:featureagg2}
 \end{figure}
 
 We should note that some features are not stable and show chaotic
@@ -869,7 +875,7 @@ in Figure \ref{fig:MCB}.
 
 }
 
-\caption{   extcolor{blue}{Performance of AF and AD models evaluated through MCB test. RMSSE values are used for computing the ranks and a 95 percentile confidence level.}}\label{fig:MCB}
+\caption{ \textcolor{blue}{Performance of AF and AD models evaluated through MCB test. RMSSE values are used for computing the ranks and a 95 percentile confidence level.}}\label{fig:MCB}
 \end{figure}
 
 In Figure \ref{fig:RMSSE}, we showed that both AF and AD have diverging
@@ -1244,7 +1250,7 @@ range of features importance.
 
 }
 
-\caption{   extcolor{blue}{Partial dependence plot - the range of features vs. the probability of classifying AF versus AD} }\label{fig:pdpcommon1}
+\caption{ \textcolor{blue}{Partial dependence plot - the range of features vs. the probability of classifying AF versus AD} }\label{fig:pdpcommon1}
 \end{figure}
 
 \begin{figure}[H]
@@ -1253,7 +1259,7 @@ range of features importance.
 
 }
 
-\caption{   extcolor{blue}{Partial dependence plot - the range of features vs. the probability of classifying AF versus AD (continue)} }\label{fig:pdpcommon2}
+\caption{ \textcolor{blue}{Partial dependence plot - the range of features vs. the probability of classifying AF versus AD (continue)} }\label{fig:pdpcommon2}
 \end{figure}
 
 Figure \ref{fig:pdpcommon1} and \ref{fig:pdpcommon2} represent the
