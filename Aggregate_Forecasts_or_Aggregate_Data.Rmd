@@ -1471,8 +1471,8 @@ dtw.dist <- function(x, y) dtw(x, y, keep=TRUE)$distance
 k <- 5 # number of nearest neighbors
 trainLabels <- trainData$marks
 testLabels <- testData$marks
-#predLabels <- knn(train = trainData[, -5], test = testData[, -5], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE, distance = dtw.dist)
-predLabels <- knn(train = trainData[,-c(1,43)], test = testData[,-c(1,43)], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE)
+predLabels <- knn(train = trainData[, -5], test = testData[, -5], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE, distance = dtw.dist)
+#predLabels <- knn(train = trainData[,-c(1,43)], test = testData[,-c(1,43)], cl = trainLabels, k = k, prob = TRUE, use.all = TRUE)
 
 
 t <- table(predLabels,ClassTable[-train,"marks"]);print(t)
@@ -1584,7 +1584,4 @@ time_1-time_0
 
 TO DO:
 
-* prebaciti sa USB-a radnu povrsinu
-* iscitati do kraja knjigu i dodati razne modele
-* pogledati sugestije recezenata i zavrsiti recenziju
-* Dodati neke od modela koje je on predlozio u recenziji
+* Connect to supercomputer at Artificial Intelligence Institute for faster rendering
