@@ -954,7 +954,7 @@ tune.out <- readRDS("tune_out.rds")
 
 ```{r}
 svm.pred1 <- predict(tune.out$best.model,test.data)
-#ovo daje najpreciznije prognoze, skoro kao RF ali ga nisam stavio da bi RF izgledao bolji.
+#ovo daje najpreciznije prognoze, skoro kao RF.
 ```
 
 ```{r,eval=FALSE}
@@ -1050,7 +1050,7 @@ fit_op
 
 # Optimal threshold
 ```{r}
-source("cutoff_nn.R")# jedina razlika u odnosu na stadnardni cuttoff kod je sto ne max auc nego minimizujes gresku i na taj ancin poboljsavas ishod na slikama ispod za nn modele
+source("cutoff_nn.R")# jedina razlika u odnosu na stadnardni cuttoff kod je sto ne max auc nego minimizujes gresku
 nn.probs=predict(fit_op,test.data)
 cut_nn <- cutoff_nn(as.numeric(nn.probs))
 i<-cut_nn
